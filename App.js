@@ -7,23 +7,21 @@
  */
 
 import React from 'react';
-import SignInScreen from './src/screens/SignInScreen';
+import SignInAsScreen from './src/screens/SignInAsScreen';
+import SignInAsDoctorScreen from './src/screens/SignInAsDoctorScreen';
+import SignInAsMedicalAssistentScreen from './src/screens/SignInAsMedicalAssistantScreen';
+import Navigation from './src/navigation';
 
 import {
   SafeAreaView,
   StyleSheet,
-  Text,
-  useColorScheme,
 } from 'react-native';
-
-
-
-
 
 const App = () => {
   return (
     <SafeAreaView style={styles.root}>
-      <SignInScreen/>
+     
+      <Navigation/>
     </SafeAreaView>
   );
   };
