@@ -33,6 +33,10 @@ local.properties
 .cxx/
 *.keystore
 !debug.keystore
+.vscode
+.bundle
+__tests__
+
 
 # node.js
 #
@@ -74,4 +78,6 @@ metro.config.js
 package.json
 package-lock.json
 tsconfig.json
+android
+ios
 
