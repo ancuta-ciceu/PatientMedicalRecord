@@ -74,8 +74,4 @@ metro.config.js
 package.json
 package-lock.json
 tsconfig.json
-__tests__
-.bundle
-.vscode
-android
-ios
+
