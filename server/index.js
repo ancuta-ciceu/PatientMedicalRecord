@@ -71,6 +71,42 @@ app.delete('/pacients/:id', async (req, res) => {
     console.error(err.message);
   }
 });
+
+app.post('/treatments', async (req, res) => {
+  try {
+    const {patient_id, days, times_per_day, medicine, administration_type} =
+      req.body;
+    const newTreatment = await pool.query(
+      'INSERT INTO treatment (patient_id, days, times_per_day, medicine, administration_type ) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [patient_id, days, times_per_day, medicine, administration_type],
+    );
+    res.json(newTreatment.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//get all pacients
+app.get('/treatments', async (req, res) => {
+  try {
+    const allTreatments = await pool.query('SELECT * FROM treatment');
+    res.json(allTreatments.rows);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+app.get('/treatments/:id', async (req, res) => {
+  try {
+    const {id} = req.params;
+    const treatment = await pool.query(
+      'SELECT * FROM treatment WHERE patient_id = $1',
+      [id],
+    );
+    res.json(treatment.rows);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 app.listen(5000, () => {
   console.log('server has started on port 5000');
 });
