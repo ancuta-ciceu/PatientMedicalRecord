@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const pool = require('./db');
+const session  = require('express-session');
 
 //middleware
 app.use(cors());
@@ -107,6 +108,7 @@ app.get('/treatments/:id', async (req, res) => {
     console.error(err.message);
   }
 });
+
 app.listen(5000, () => {
   console.log('server has started on port 5000');
 });

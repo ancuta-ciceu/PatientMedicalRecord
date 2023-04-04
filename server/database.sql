@@ -17,3 +17,10 @@ CREATE TABLE treatment(
     medicine VARCHAR(255),
     administration_type VARCHAR(500)
 );
+
+CREATE TABLE doctor(
+    doctor_id SERIAL PRIMARY KEY,
+    doctor_name VARCHAR(255) NOT NULL UNIQUE,
+    passhash VARCHAR(255) NOT NULL, 
+    doctor_specialization VARCHAR(255)
+);
