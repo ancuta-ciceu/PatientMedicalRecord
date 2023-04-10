@@ -21,6 +21,17 @@ CREATE TABLE treatment(
 CREATE TABLE doctor(
     doctor_id SERIAL PRIMARY KEY,
     doctor_name VARCHAR(255) NOT NULL UNIQUE,
-    passhash VARCHAR(255) NOT NULL, 
-    doctor_specialization VARCHAR(255)
+    doctor_passhash VARCHAR(255) NOT NULL, 
+    doctor_specialization VARCHAR(255),
+    doctor_email VARCHAR(255)
 );
+
+CREATE TABLE medical_assistant(
+    medical_assistant_id SERIAL PRIMARY KEY,
+    medical_assistant_name VARCHAR(255) NOT NULL UNIQUE,
+    medical_assistant_passhash VARCHAR(255) NOT NULL,
+    medical_assistant_email VARCHAR(255)
+);
+
+/*add some data*/
+INSERT INTO doctor(doctor_name, doctor_passhash, doctor_specialization, doctor_email) VALUES ('doctor1', 'doctor1', 'specialization1', 'doctor1@gmail.com');  

@@ -7,6 +7,7 @@ const session  = require('express-session');
 //middleware
 app.use(cors());
 app.use(express.json());
+ 
 
 //ROUTES//
 
