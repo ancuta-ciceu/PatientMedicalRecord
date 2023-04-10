@@ -1,14 +1,38 @@
 import React, {useState} from 'react'
-import {View, Text, StyleSheet, ScrollView } from 'react-native'
+import {View, Text, StyleSheet, ScrollView, FormErrorMessage } from 'react-native'
 import CustomInput from '../../components/CustomInput'
 import CustomButton from '../../components/CustomButton'
+import {QRCodeScannerScreen} from '../QRCodeScreens/ScanQRCode';
+import {PacientFormForDoctorScreen} from '../PacientFormScreens/PacientFormForDoctor';
+import {useNavigation} from '@react-navigation/native';
+//import router from '../../routers/authRouter' 
+import api from '../api';
+
+
 
 const SignInAsDoctorScreen = () => {
     const [username, setUsername]= useState('');
     const [password, setPassword]= useState('');
-    
-    const onSignInPressed = () => {
-        console.warn("Sign in");
+    const navigation = useNavigation();
+    const useAuth = () => {
+      const user = {loggedIn: false};
+      return user && user.loggedIn;
+    };
+
+
+
+    const onSignInPressed = async() => {
+      //console.warn("Sign in");
+      try {
+        const response = await api.post('/doctor', { doctor_name, doctor_passhash });
+        const { token } = response.data;
+        // Save token to storage or global state
+        navigation.navigate('QRCodeScannerScreen');
+      } catch (error) {
+        console.error(error);
+      }
+  
+  
     }
 
     const onForgotPasswordPressed = () => {
@@ -24,21 +48,24 @@ const SignInAsDoctorScreen = () => {
     }
 
     return(
+      
         <ScrollView showsVerticalScrollIndicator={false}>
         <View>
-            <Text style={styles.text_SignIN}>SIGN IN AS DOCTOR</Text>
+          <Text style={styles.text_SignIN}>SIGN IN AS DOCTOR</Text>
             <CustomInput 
               placeholder="Username" 
               value={username}
               setValue={setUsername}
+              
             />
+            
             <CustomInput 
               placeholder="Password" 
               value={password} 
               setValue={setPassword} 
               secureTextEntry={true} 
             />
-
+            
             <CustomButton 
               text="Forgot password?" 
               onPress={onForgotPasswordPressed} 
