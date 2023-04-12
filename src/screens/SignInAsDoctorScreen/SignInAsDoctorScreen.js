@@ -3,12 +3,22 @@ import {View, Text, StyleSheet, ScrollView } from 'react-native'
 import CustomInput from '../../components/CustomInput'
 import CustomButton from '../../components/CustomButton'
 
+
+
 const SignInAsDoctorScreen = () => {
-    const [username, setUsername]= useState('');
-    const [password, setPassword]= useState('');
-    
-    const onSignInPressed = () => {
-        console.warn("Sign in");
+    const [doctor_name, setUsername]= useState('');
+    const [doctor_password, setPassword]= useState('');
+
+    const onSignInPressed = async() => {
+        try {
+          const response = await axios.post('http://localhost:5000/login',{ doctor_name, doctor_password });
+          const { token } = response.data;
+          await AsyncStorage.setItem('token', token);
+          //console.warn('Login successful');
+          navigation.navigate('SignInAsScreen');
+        } catch (error) {
+          console.warn('Login failed');
+        }
     }
 
     const onForgotPasswordPressed = () => {
@@ -24,17 +34,17 @@ const SignInAsDoctorScreen = () => {
     }
 
     return(
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={true}>
         <View>
             <Text style={styles.text_SignIN}>SIGN IN AS DOCTOR</Text>
             <CustomInput 
               placeholder="Username" 
-              value={username}
+              value={doctor_name}
               setValue={setUsername}
             />
             <CustomInput 
               placeholder="Password" 
-              value={password} 
+              value={doctor_password} 
               setValue={setPassword} 
               secureTextEntry={true} 
             />
