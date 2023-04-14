@@ -3,7 +3,7 @@ const pool = new Pool({
   user: 'ancuta',
   password: '1234',
   host: 'localhost',
-  port: 5432,
+  port: 5000,
   database: 'pacientmedicalrecord',
 });
 

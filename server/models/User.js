@@ -4,12 +4,13 @@ const Sequelize = require('sequelize');
 
 
 const sequelize = new Sequelize('pacientmedicalrecord', 'ancuta', '1234', {
+  table: 'doctor',
   host: 'localhost',
   dialect: 'postgres'
 });
 
 
-const User = sequelize.define('User', {
+const Doctor = sequelize.define('Doctor', {
   doctor_name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -22,4 +23,4 @@ const User = sequelize.define('User', {
   }
 });
 
-module.exports = User;
+module.exports = Doctor;

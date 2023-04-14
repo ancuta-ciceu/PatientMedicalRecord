@@ -5,30 +5,47 @@ const pool = require('./db');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User } = require('./models/User');
+//const { Doctor } = require('./models/User');
+const { Sequelize } = require('sequelize');
+
 
 
 //middleware
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
+
+const sequelize = new Sequelize('pacientmedicalrecord', 'ancuta', '1234', {
+  host: 'localhost',
+  dialect: 'postgres'
+});
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 
 //ROUTES//
 
 //try to login as doctor
 
-
-  app.post('/SigInAsDoctor', async (req, res) => {
+  app.post('/SigInAsDoctorScreen', async (req, res) => {
     try{
-    const { doctor_name, doctor_password } = req.body;
-    const doctor_user = await User.findOne({ where: { doctor_name } });
+    //const { doctor_name, doctor_passhash } = req.body;
+    //const doctor_user = await Doctor.findOne({ where: { doctor_name } });
+    const doctor_user = await pool.query('SELECT doctor_name FROM doctor WHERE doctor_name = $1', [req.body.doctor_name]);
     if (!doctor_user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    const isPasswordValid = await bycript.compare(doctor_password, doctor_user.password);
+    const isPasswordValid = await compare(doctor_passhash, doctor_user.doctor_passhash);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
-    const token = jwt.sign({ id: doctor_user.id }, 'secret');
+    const token = jwt.sign({ id: doctor_user.doctor_name }, 'secret');
     res.json({ token });
     }catch (err) {
       console.error(err.message);
@@ -134,6 +151,8 @@ app.get('/treatments/:id', async (req, res) => {
     console.error(err.message);
   }
 });
-app.listen(5000, () => {
-  console.log('server has started on port 5000');
+const port = 5000;
+app.listen(port, () => {
+  //console.log('server has started on port ${port}');
+  console.log(`Server listening on port ${port}`)
 });
