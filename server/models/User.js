@@ -10,8 +10,15 @@ const sequelize = new Sequelize('pacientmedicalrecord', 'ancuta', '1234', {
 });
 
 
-const Doctor = sequelize.define('Doctor', {
+
+const DoctorSchema = sequelize.define('Doctor', {
   doctor_name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+
+  doctor_email : {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true
@@ -20,7 +27,12 @@ const Doctor = sequelize.define('Doctor', {
   doctor_passhash: {
     type: DataTypes.STRING,
     allowNull: false
+  },
+  doctor_specialization: {
+    type: DataTypes.STRING,
+    allowNull: true,
   }
+
 });
 
-module.exports = Doctor;
+module.exports = DoctorSchema;

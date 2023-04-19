@@ -1,9 +1,11 @@
 const Pool = require('pg').Pool;
+//require('dotenv').config();
+
 const pool = new Pool({
   user: 'ancuta',
   password: '1234',
   host: 'localhost',
-  port: 5000,
+  port: 5432,
   database: 'pacientmedicalrecord',
 });
 

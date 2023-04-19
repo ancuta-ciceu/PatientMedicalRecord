@@ -1,9 +1,9 @@
 CREATE DATABASE pacientmedicalrecord;
 
 CREATE TABLE pacient(
-    patient_id SERIAL PRIMARY KEY,
+    pacient_id SERIAL PRIMARY KEY,
     cnp VARCHAR(50),
-    patient_name VARCHAR(255),
+    pacient_name VARCHAR(255),
     age INT,
     sex VARCHAR(50),
     admission_date DATE
@@ -20,10 +20,16 @@ CREATE TABLE treatment(
 
 CREATE TABLE doctor(
     doctor_id SERIAL PRIMARY KEY,
-    doctor_name VARCHAR(255) NOT NULL,
-    doctor_passhash VARCHAR(255) NOT NULL,
+    doctor_name VARCHAR(255),
+    doctor_passhash VARCHAR(255),
     doctor_specialization VARCHAR(255),
-    doctor_email VARCHAR(255),
+    doctor_email VARCHAR(255)
 );
 
-INSERT INTO doctor (doctor_name, doctor_passhash, doctor_specialization, doctor_email) VALUES ('doctor2', 'doctor2', 'Cardiologist', 'doctor2@email.com');
+CREATE TABLE medical_assistant(
+    medical_assistant_id SERIAL PRIMARY KEY,
+    medical_assistant_name VARCHAR(255),
+    medical_assistant_passhash VARCHAR(255),
+    medical_assistant_email VARCHAR(255)
+);
+
