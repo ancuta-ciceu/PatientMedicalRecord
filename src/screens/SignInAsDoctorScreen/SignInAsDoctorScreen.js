@@ -4,21 +4,23 @@ import CustomInput from '../../components/CustomInput'
 import CustomButton from '../../components/CustomButton'
 import axios from 'axios'
 import { useEffect } from 'react'
+import {useNavigation} from '@react-navigation/native';
 
 
 
 const SignInAsDoctorScreen = () => {
     const [doctor_name, setUsername]= useState('');
     const [doctor_password, setPassword]= useState('');
+    const navigation = useNavigation();
 
    //const doctor_name = 'doctor1'
     const onSignInPressed = async() => {
        try {
-         const response = await axios.post(`http://localhost:5000/SignInAsDoctor`,{ doctor_name, doctor_password });
-         const { token } = response.data;
+         const response = await fetch(`http://localhost:5000/logindoctor`, requestOptions);
+         const { token } = await response.data;
          await AsyncStorage.setItem('token', token);
          console.warn('Login successful');
-         navigation.navigate('SignInAsScreen');
+         navigation.navigate('QRCodeScannerScreen');
         } catch (error) {
          if (error.response) {
            // The request was made and the server responded with a status code
@@ -48,7 +50,8 @@ const SignInAsDoctorScreen = () => {
     }
 
     const onSignUpPressed = () => {
-        console.warn("Sign up");
+      navigation.navigate('SignUpDoctorScreen');
+
     }
 
     return(

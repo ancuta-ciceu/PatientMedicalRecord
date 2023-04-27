@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Text, StyleSheet, View, TextInput, Button} from 'react-native';
 import {useForm} from 'react-hook-form';
+import CustomInput from '../../components/CustomInput'
 interface Pacient {
   pacientId: number;
   CNP: string;
@@ -60,34 +61,49 @@ export const PacientFormForDoctorScreen = () => {
   return (
     //<form onSubmit={handleSubmit(dataa => console.log(dataa))}>
     <View>
-      <Text> Pacient Form </Text>
+      <Text style={styles.text_PatientForm}> Patient Medical Form </Text>
       <Text>{patient.patientName}</Text>
       <View>
         <Text>Medicine name:</Text>
-        <TextInput {...register('medicine')} />
+        <CustomInput 
+              placeholder="medicine name" 
+              {...register('medicine')}
+            />
         <Text>Type of administration:</Text>
-        <TextInput
-          {...register('administrationType')}
-          // placeholder="Type of administration"
-        />
+        <CustomInput 
+              placeholder="Type of administration" 
+              {...register('administrationType')}
+            />
         <Text>Number of days to administrate::</Text>
-        <TextInput
-          {...register('days')}
-          // placeholder="Number of days to administrate:"
-          //type={'number'}
-        />
+
+        <CustomInput 
+              placeholder="Number of days to administrate:"
+              {...register('days')}
+            />
         <Text>Number of times/day to administrate::</Text>
-        <TextInput
-          {...register('timesPerDay')}
-          // placeholder="Number of times/day to administrate:"
-          //type={'number'}
-        />
+        <CustomInput 
+              placeholder="Times per day" 
+              {...register('timesPerDay')}
+            />
       </View>
     </View>
     //</form>
   );
 };
 
-// const styles = StyleSheet.create({
-//   //Check project repo for styles
-// });
+const styles = StyleSheet.create({
+  text_PatientForm: {
+    textAlign: 'center',
+    marginHorizontal: 50,
+    width: '70%',
+    maxWidth: 300,
+    fontSize: 40,
+    marginTop: 50,
+    marginBottom: 25,
+    fontFamily: 'Gill Sans Extrabold',
+  },
+  root: {
+    alignItems: 'center',
+    padding: 20,
+  },
+});

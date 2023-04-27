@@ -21,12 +21,31 @@ app.use(express.json());
 app.post('/createdoctor', async (req, res) => {
   try {
     const {doctor_name, doctor_email, doctor_passhash, doctor_specialization} = req.body;
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(doctor_passhash, saltRounds);
     const newDoctor = await pool.query(
       'INSERT INTO doctor (doctor_name, doctor_email, doctor_passhash, doctor_specialization) VALUES ($1, $2, $3, $4 ) RETURNING *',
-      [doctor_name, doctor_email, doctor_passhash, doctor_specialization],
+      [doctor_name, doctor_email, hashedPassword, doctor_specialization],
     );
-    //const newDoctor =  await pool.query('INSERT INTO doctor (doctor_name, doctor_passhash, doctor_specialization, doctor_email) VALUES ("doctor3", "doctor3", "Cardiologist", "doctor3@email.com")');
+    
     res.json(newDoctor.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+//create a medical assistant
+app.post('/createmedicalassistant', async (req, res) => {
+  try {
+    const {medical_assistant_name, medical_assistant_email, medical_assistant_passhash} = req.body;
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(medical_assistant_passhash, saltRounds);
+    const newMedicalAssistant = await pool.query(
+      'INSERT INTO medical_assistant (medical_assistant_name, medical_assistant_email, medical_assistant_passhash) VALUES ($1, $2, $3 ) RETURNING *',
+      [medical_assistant_name, medical_assistant_email, hashedPassword],
+    );
+    
+    res.json(newMedicalAssistant.rows[0]);
   } catch (err) {
     console.error(err.message);
   }
@@ -34,27 +53,39 @@ app.post('/createdoctor', async (req, res) => {
 
 
 //try to login as doctor
-
-  app.get('/', async (req, res) => {
-    // try{
-    // const { doctor_name, doctor_passhash } = req.body;
-    // //const doctor_user = await Doctor.findOne({ where: { doctor_name } });
-    // const doctor_user = await pool.query('SELECT doctor_name FROM doctor WHERE doctor_name = $1', [doctor_name]);
-    // if (!doctor_user) {
-    //   return res.status(404).json({ message: 'User not found' });
-    // }
-    // const isPasswordValid = await compare(doctor_passhash, doctor_user.doctor_passhash);
-    // if (!isPasswordValid) {
-    //   return res.status(401).json({ message: 'Invalid password' });
-    // }
-    // const token = jwt.sign({ doctor_name }, secretKey, { expiresIn: '1h' });
-    // res.json({ token });
-    // }catch (err) {
-    //   console.error(err.message);
-    // }
-    res.send('hello');
-    
+  app.get('/logindoctor', async (req, res) => {
+    try {
+      const {doctor_name, doctor_passhash} = req.body;
+      doctor_name = 'doctor1';
+      const doctor_user = await pool.query(
+        "SELECT doctor_name FROM doctor WHERE doctor_name = $1", [doctor_name]);
+        //console_log(doctor_user);
+      res.json(doctor_user.rows);
+    } catch (err) {
+      console.error(err.message);
+    }
   });
+
+
+  /*app.get('/logindoctor', async (req, res) => {
+    try{
+    const { doctor_name, doctor_passhash } = req.body;
+    const doctor_user = await Doctor.findOne({ where: { doctor_name } });
+    //const doctor_user = await pool.query('SELECT doctor_name FROM doctor WHERE doctor_name = $1', [doctor_name]);
+    if (!doctor_user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const isPasswordValid = await bcrypt.compare(doctor_passhash, doctor_user.doctor_passhash);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+    const token = jwt.sign({ doctor_name }, secretKey, { expiresIn: '1h' });
+    res.json({ token });
+    }catch (err) {
+      console.error(err.message);
+    }
+    
+  });*/
 
 //create a pacient
 app.post('/pacients', async (req, res) => {
