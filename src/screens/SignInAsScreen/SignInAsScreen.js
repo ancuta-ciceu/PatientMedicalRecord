@@ -4,6 +4,7 @@ import CustomButton from '../../components/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 import {QRCodeScannerScreen} from '../QRCodeScreens/ScanQRCode';
 import {PacientFormForDoctorScreen} from '../PacientFormScreens/PacientFormForDoctor';
+import {SignUpDoctorScreen} from '../SignUpScreen/SignUpDoctorScreen';
 
 const SignInAsScreen = () => {
   const navigation = useNavigation();
@@ -27,6 +28,10 @@ const SignInAsScreen = () => {
     navigation.navigate('PacientFormForDoctorScreen');
   };
 
+  const onSignUpPressed = () => {
+    navigation.navigate('SignUpDoctorScreen');
+  };
+
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View>
@@ -42,6 +47,7 @@ const SignInAsScreen = () => {
           text="PacientFormForDoctorScreen"
           onPress={onPacientFormPressed}
         />
+        <CustomButton text="SignUp" onPress={onSignUpPressed} />
       </View>
     </ScrollView>
   );
