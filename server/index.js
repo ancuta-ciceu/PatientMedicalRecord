@@ -12,10 +12,10 @@ app.use(express.json());
 //create a pacient
 app.post('/pacients', async (req, res) => {
   try {
-    const {cnp, pacient_name, age, sex, admission_date} = req.body;
+    const {cnp, patientName, age, sex, admissionDate} = req.body;
     const newPacient = await pool.query(
-      'INSERT INTO pacient (cnp, pacient_name, age, sex, admission_date) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [cnp, pacient_name, age, sex, admission_date],
+      'INSERT INTO pacient (cnp, patientName, age, sex, admissionDate) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [cnp, patientName, age, sex, admissionDate],
     );
     res.json(newPacient.rows[0]);
   } catch (err) {
@@ -38,7 +38,7 @@ app.get('/pacients/:id', async (req, res) => {
   try {
     const {id} = req.params;
     const pacient = await pool.query(
-      'SELECT * FROM pacient WHERE pacient_id = $1',
+      'SELECT * FROM pacient WHERE "patientId" = $1',
       [id],
     );
     res.json(pacient.rows[0]);
@@ -51,10 +51,10 @@ app.get('/pacients/:id', async (req, res) => {
 app.put('/pacients/:id', async (req, res) => {
   try {
     const {id} = req.params;
-    const {cnp, pacient_name, age, sex, admission_date} = req.body;
+    const {cnp, patientName, age, sex, admissionDate} = req.body;
     const updatedPacient = await pool.query(
-      'UPDATE pacient SET cnp = $1, pacient_name = $2, age = $3, sex = $4, admission_date = $5 WHERE pacient_id = $6',
-      [cnp, pacient_name, age, sex, admission_date, id],
+      'UPDATE pacient SET cnp = $1, patientName = $2, age = $3, sex = $4, admissionDate = $5 WHERE patientId = $6',
+      [cnp, patientName, age, sex, admissionDate, id],
     );
     res.json(updatedPacient.rows[0]);
   } catch (err) {
@@ -65,7 +65,7 @@ app.put('/pacients/:id', async (req, res) => {
 app.delete('/pacients/:id', async (req, res) => {
   try {
     const {id} = req.params;
-    await pool.query('DELETE FROM pacient WHERE pacient_id = $1', [id]);
+    await pool.query('DELETE FROM pacient WHERE patientId = $1', [id]);
     res.json(`pacient with id ${id} was deleted`);
   } catch (err) {
     console.error(err.message);

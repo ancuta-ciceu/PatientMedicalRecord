@@ -1,13 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, TextInput, Button} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TextInput,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import {useForm} from 'react-hook-form';
 interface Pacient {
-  pacientId: number;
-  CNP: string;
+  patientId: number;
+  cnp: string;
   patientName: string;
   age: number;
   sex: string;
-  admission_date: string;
+  admissionDate: string;
 }
 
 interface Treatment {
@@ -19,12 +26,12 @@ interface Treatment {
 }
 
 const initialPacient: Pacient = {
-  pacientId: 0,
-  CNP: '',
+  patientId: 0,
+  cnp: '',
   patientName: '',
   age: 0,
   sex: '',
-  admission_date: '',
+  admissionDate: '',
 };
 
 const initialTreatment: Treatment = {
@@ -42,26 +49,101 @@ export const PacientFormForDoctorScreen = () => {
   const getPatientById = async (id: string) => {
     const data = await fetch(`http://localhost:5000/pacients/${id}`, {
       method: 'GET',
-    });
-    return await data.json();
+    }).catch(err => console.log(err + 1));
+    setPatient(await data?.json());
+    //etPatient(json);
   };
 
   useEffect(() => {
-    getPatientById('1')
-      .then(jsonData => {
-        console.warn(jsonData.results);
-        setPatient(jsonData.results);
-      })
-      .catch(err => console.log(err));
+    getPatientById('1');
   }, []);
 
+  useEffect(() => {
+    console.log(patient);
+  }, [patient]);
+
   const {register, handleSubmit} = useForm();
+
+  // const [name, setName] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [password, setPassword] = useState('');
+  //
+  // const handleSubmit = () => {
+  //   console.log('Submitted!');
+  //   // Add your form submission logic here
+  // };
+  //
+  //   return (
+  //     <View style={styles.container}>
+  //       <Text style={styles.title}>Sign Up</Text>
+  //       <TextInput
+  //         style={styles.input}
+  //         placeholder="Name"
+  //         value={name}
+  //         onChangeText={setName}
+  //       />
+  //       <TextInput
+  //         style={styles.input}
+  //         placeholder="Email"
+  //         value={email}
+  //         onChangeText={setEmail}
+  //         keyboardType="email-address"
+  //         autoCapitalize="none"
+  //       />
+  //       <TextInput
+  //         style={styles.input}
+  //         placeholder="Password"
+  //         value={password}
+  //         onChangeText={setPassword}
+  //         secureTextEntry
+  //         autoCapitalize="none"
+  //       />
+  //       <TouchableOpacity style={styles.button}>
+  //         <Text style={styles.buttonText}>Submit</Text>
+  //       </TouchableOpacity>
+  //     </View>
+  //   );
+  // };
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 20,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginBottom: 20,
+    },
+    input: {
+      width: '100%',
+      height: 50,
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 5,
+      paddingHorizontal: 10,
+      marginBottom: 10,
+    },
+    button: {
+      backgroundColor: 'blue',
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 5,
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+  });
 
   return (
     //<form onSubmit={handleSubmit(dataa => console.log(dataa))}>
     <View>
       <Text> Pacient Form </Text>
-      <Text>{patient.patientName}</Text>
+      <Text>{patient?.patientName}</Text>
       <View>
         <Text>Medicine name:</Text>
         <TextInput {...register('medicine')} />
