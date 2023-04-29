@@ -143,7 +143,7 @@ export const PacientFormForDoctorScreen = () => {
     //<form onSubmit={handleSubmit(dataa => console.log(dataa))}>
     <View>
       <Text> Pacient Form </Text>
-      <Text>{patient?.patientName}</Text>
+      <Text>{patient.patientName}</Text>
       <View>
         <Text>Medicine name:</Text>
         <TextInput {...register('medicine')} />

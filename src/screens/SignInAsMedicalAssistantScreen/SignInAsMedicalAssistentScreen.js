@@ -2,10 +2,13 @@ import React, {useState} from 'react'
 import {View, Text, StyleSheet, ScrollView } from 'react-native'
 import CustomInput from '../../components/CustomInput'
 import CustomButton from '../../components/CustomButton'
+import {useNavigation} from '@react-navigation/native';
 
 const SignInAsMedicalAssistantScreen = () => {
     const [username, setUsername]= useState('');
     const [password, setPassword]= useState('');
+
+    const navigation = useNavigation();
     
     const onSignInPressed = () => {
         console.warn("Sign in");
@@ -20,7 +23,7 @@ const SignInAsMedicalAssistantScreen = () => {
     }
 
     const onSignUpPressed = () => {
-        console.warn("Sign up");
+      navigation.navigate('SignUpMedicalAssistantScreen');
     }
 
     return(
