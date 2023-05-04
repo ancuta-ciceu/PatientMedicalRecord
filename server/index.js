@@ -53,18 +53,25 @@ app.post('/createmedicalassistant', async (req, res) => {
 
 
 //try to login as doctor
-  app.get('/logindoctor', async (req, res) => {
-    try {
-      const {doctor_name, doctor_passhash} = req.body;
-      doctor_name = 'doctor1';
-      const doctor_user = await pool.query(
-        "SELECT doctor_name FROM doctor WHERE doctor_name = $1", [doctor_name]);
-        //console_log(doctor_user);
-      res.json(doctor_user.rows);
-    } catch (err) {
-      console.error(err.message);
-    }
-  });
+app.get('/logindoctor', async (req, res) => {
+  try{
+  const { doctor_name, doctor_passhash } = req.body;
+  //const doctor_user = await Doctor.findOne({ where: { doctor_name } });
+  const doctor_user = await pool.query('SELECT doctor_name FROM doctor WHERE doctor_name = $1', [doctor_name]);
+  if (!doctor_user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+  const isPasswordValid = await bcrypt.compare(doctor_passhash, doctor_user.doctor_passhash);
+  if (!isPasswordValid) {
+    return res.status(401).json({ message: 'Invalid password' });
+  }
+  const token = jwt.sign({ doctor_name }, secretKey, { expiresIn: '1h' });
+  res.json({ token });
+  }catch (err) {
+    console.error(err.message);
+  }
+  
+});
 
 
   /*app.get('/logindoctor', async (req, res) => {

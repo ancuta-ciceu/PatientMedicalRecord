@@ -12,6 +12,7 @@ const SignInAsDoctorScreen = () => {
     const [doctor_name, setUsername]= useState('');
     const [doctor_password, setPassword]= useState('');
     const navigation = useNavigation();
+    
 
    //const doctor_name = 'doctor1'
     const onSignInPressed = async() => {
