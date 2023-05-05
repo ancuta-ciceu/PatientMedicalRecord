@@ -1,44 +1,36 @@
 import React, {useState} from 'react'
-import {View, Text, StyleSheet, ScrollView, AsyncStorage } from 'react-native'
+import {View, Text, StyleSheet, ScrollView, Alert } from 'react-native'
 import CustomInput from '../../components/CustomInput'
 import CustomButton from '../../components/CustomButton'
 import axios from 'axios'
-import { useEffect } from 'react'
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
 const SignInAsDoctorScreen = () => {
-    const [doctor_name, setUsername]= useState('');
-    const [doctor_password, setPassword]= useState('');
+    const [doctorName, setUsername]= useState('');
+    const [doctorPassword, setPassword]= useState('');
     const navigation = useNavigation();
     
 
-   //const doctor_name = 'doctor1'
     const onSignInPressed = async() => {
-       try {
-         const response = await fetch(`http://localhost:5000/logindoctor`, requestOptions);
-         const { token } = await response.data;
-         await AsyncStorage.setItem('token', token);
-         console.warn('Login successful');
+      try {
+        const response = await axios.post('http://localhost:5000/logindoctor', {
+          doctor_name: doctorName,
+          doctor_passhash: doctorPassword
+        });
+        const token = response.data.token;
+  
+        // Store the token securely
+        await AsyncStorage.setItem('token', token);
          navigation.navigate('QRCodeScannerScreen');
-        } catch (error) {
-         if (error.response) {
-           // The request was made and the server responded with a status code
-           // that falls out of the range of 2xx
-           console.error(error.response.data);
-           console.error(error.response.status);
-           console.error(error.response.headers);
-         } else if (error.request) {
-            //The request was made but no response was received
-           console.error(error.request);
-         } else {
-           // Something happened in setting up the request that triggered an Error
-           console.error('Error', error.message);
-         }
-         console.warn('Login failed');
-        }
-        
+         console.warn("Login succesfull");
+      } catch (error) {
+        console.error(error);
+        Alert.alert('Invalid username or password');
+      }
 
     }
 
@@ -61,12 +53,12 @@ const SignInAsDoctorScreen = () => {
             <Text style={styles.text_SignIN}>SIGN IN AS DOCTOR</Text>
             <CustomInput 
               placeholder="Username" 
-              value={doctor_name}
+              value={doctorName}
               setValue={setUsername}
             />
             <CustomInput 
               placeholder="Password" 
-              value={doctor_password} 
+              value={doctorPassword} 
               setValue={setPassword} 
               secureTextEntry={true} 
             />
@@ -76,7 +68,12 @@ const SignInAsDoctorScreen = () => {
               onPress={onForgotPasswordPressed} 
               type='TERTIARY'
             />
-            <CustomButton text="Login" onPress={onSignInPressed}/>
+
+            <CustomButton 
+              text="Login" 
+              onPress={onSignInPressed}
+            />
+
             <CustomButton 
               text="Sign In with Google" 
               onPress={onSignInWithGoogle}
@@ -116,3 +113,6 @@ const styles = StyleSheet.create({
 })
 
 export default SignInAsDoctorScreen
+
+
+

@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 import {QRCodeScannerScreen} from '../QRCodeScreens/ScanQRCode';
-import {PacientFormForDoctorScreen} from '../PacientFormScreens/PacientFormForDoctor';
+import {PatientFormForAssistantScreen} from '../PacientFormScreens/PatientFormForAssistent';
 import {SignUpDoctorScreen} from '../SignUpScreen/SignUpDoctorScreen';
 
 const SignInAsScreen = () => {
@@ -24,13 +24,14 @@ const SignInAsScreen = () => {
     navigation.navigate('QRCodeScannerScreen');
   };
 
-  const onPacientFormPressed = () => {
+  const onPatientFormDoctorPressed = () => {
     navigation.navigate('PacientFormForDoctorScreen');
   };
 
-  const onSignUpPressed = () => {
-    navigation.navigate('SignUpDoctorScreen');
+  const onPatientFormAssistantPressed = () => {
+    navigation.navigate('PacientFormForAssistantScreen');
   };
+
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -44,10 +45,13 @@ const SignInAsScreen = () => {
         />
         <CustomButton text="Scan QR" onPress={onScanQRPressed} />
         <CustomButton
-          text="PacientFormForDoctorScreen"
-          onPress={onPacientFormPressed}
+          text="Patient Form For Doctor Screen"
+          onPress={onPatientFormDoctorPressed}
         />
-        <CustomButton text="SignUp" onPress={onSignUpPressed} />
+        <CustomButton
+          text="Patient Form For Assistent Screen"
+          onPress={onPatientFormAssistantPressed}
+        />
       </View>
     </ScrollView>
   );

@@ -5,9 +5,10 @@ import SignInAsDoctorScreen from '../screens/SignInAsDoctorScreen';
 import SignInAsMedicalAssistantScreen from '../screens/SignInAsMedicalAssistantScreen';
 import SignInAsScreen from '../screens/SignInAsScreen';
 import {QRCodeScannerScreen} from '../screens/QRCodeScreens/ScanQRCode';
-import {PacientFormForDoctorScreen} from '../screens/PacientFormScreens/PacientFormForDoctor';
+import {PatientFormForAssistantScreen} from '../screens/PacientFormScreens/PatientFormForAssistent';
 import {SignUpDoctorScreen} from '../screens/SignUpScreen/SignUpDoctorScreen';
-import { SignUpMedicalAssistantScreen } from '../screens/SignUpScreen/SignUpMedicalAssistantScreen';
+import {SignUpMedicalAssistantScreen} from '../screens/SignUpScreen/SignUpMedicalAssistantScreen';
+import {PatientFormForDoctorScreen} from '../screens/PacientFormScreens/PatientFormForDoctor';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,8 +30,12 @@ const Navigation = () => {
           component={QRCodeScannerScreen}
         />
         <Stack.Screen
+          name="PacientFormForAssistantScreen"
+          component={PatientFormForAssistantScreen}
+        />
+        <Stack.Screen
           name="PacientFormForDoctorScreen"
-          component={PacientFormForDoctorScreen}
+          component={PatientFormForDoctorScreen}
         />
         <Stack.Screen
           name="SignUpDoctorScreen"
