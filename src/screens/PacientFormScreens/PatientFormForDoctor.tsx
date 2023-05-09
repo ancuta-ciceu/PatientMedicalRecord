@@ -1,31 +1,8 @@
 import {Text, View, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import Modal from 'react-native-modal';
 import {Icon, lightColors} from '@rneui/themed';
-
-interface FormModalProps {
-  isVisible: boolean;
-  setVisibility: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const FormModal = ({isVisible, setVisibility}: FormModalProps) => {
-  return (
-    <View>
-      <Modal
-        isVisible={isVisible}
-        animationIn={'slideInUp'}
-        animationInTiming={700}
-        animationOutTiming={700}
-        swipeDirection={['down']}
-        backdropOpacity={0.9}>
-        <View style={{flex: 1}}>
-          <Text>Hello!</Text>
-          <Button title="Hide modal" onPress={() => setVisibility(false)} />
-        </View>
-      </Modal>
-    </View>
-  );
-};
+import {useForm} from 'react-hook-form';
+import {FormModal} from './Components/TreatmentModal';
 
 interface Pacient {
   patientId: number;
@@ -45,13 +22,33 @@ const initialPacient: Pacient = {
   admissionDate: '',
 };
 
+export interface Treatment {
+  treatmentId: number;
+  patientId: number;
+  days: number;
+  timesPerDay: number;
+  medicine: string;
+  administrationType: string;
+}
+
+const initialTreatment: Treatment = {
+  patientId: 0,
+  treatmentId: 0,
+  administrationType: '',
+  medicine: '',
+  days: 0,
+  timesPerDay: 0,
+};
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 };
 
 export const PatientFormForDoctorScreen = () => {
+  const {control, handleSubmit} = useForm();
   const [patient, setPatient] = useState<Pacient>(initialPacient);
+  const [treatment, setTreatment] = useState<Treatment>(initialTreatment);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const getPatientById = async (id: string) => {
@@ -62,7 +59,7 @@ export const PatientFormForDoctorScreen = () => {
   };
 
   useEffect(() => {
-    getPatientById('7');
+    getPatientById('1');
   }, []);
 
   return (
@@ -97,8 +94,13 @@ export const PatientFormForDoctorScreen = () => {
       <TouchableOpacity style={{marginTop: 20}}>
         <Button title="Show modal" onPress={() => setModalVisible(true)} />
       </TouchableOpacity>
-
-      <FormModal isVisible={isModalVisible} setVisibility={setModalVisible} />
+      <FormModal
+        isVisible={isModalVisible}
+        setVisibility={setModalVisible}
+        control={control}
+        setTreatment={setTreatment}
+        patientId={patient.patientId}
+      />
     </View>
   );
 };
