@@ -182,11 +182,11 @@ app.delete('/pacients/:id', async (req, res) => {
 
 app.post('/treatments', async (req, res) => {
   try {
-    const {patient_id, days, times_per_day, medicine, administration_type} =
+    const {patientId, days, timesPerDay, medicine, administrationType} =
       req.body;
     const newTreatment = await pool.query(
-      'INSERT INTO treatment (patient_id, days, times_per_day, medicine, administration_type ) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [patient_id, days, times_per_day, medicine, administration_type],
+      'INSERT INTO treatment ("patientId", days, "timesPerDay", medicine, "administrationType" ) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [patientId, days, timesPerDay, medicine, administrationType],
     );
     res.json(newTreatment.rows[0]);
   } catch (err) {
@@ -207,7 +207,7 @@ app.get('/treatments/:id', async (req, res) => {
   try {
     const {id} = req.params;
     const treatment = await pool.query(
-      'SELECT * FROM treatment WHERE patient_id = $1',
+      'SELECT * FROM treatment WHERE "patientId" = $1',
       [id],
     );
     res.json(treatment.rows);

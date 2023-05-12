@@ -1,5 +1,5 @@
 import {Controller} from 'react-hook-form';
-import {StyleSheet, TextInput} from 'react-native';
+import {Alert, StyleSheet, TextInput} from 'react-native';
 import React from 'react';
 
 interface CustomInputProps {
@@ -15,17 +15,19 @@ export const CustomInput = ({
   placeholder,
   numerical = false,
 }: CustomInputProps) => {
+  Alert.prompt('error');
   return (
     <Controller
       control={control}
       name={name}
+      rules={{required: true}}
       render={({field: {value, onChange, onBlur}}) => (
         <TextInput
           keyboardType={numerical ? 'numeric' : 'default'}
           value={value}
           onChangeText={onChange}
           onBlur={onBlur}
-          placeholder={placeholder}
+          placeholder={`${placeholder} *`}
           style={styles.input}
         />
       )}
@@ -42,5 +44,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
+    backgroundColor: 'white',
   },
 });
