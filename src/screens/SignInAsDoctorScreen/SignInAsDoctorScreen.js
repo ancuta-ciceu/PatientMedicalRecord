@@ -1,3 +1,4 @@
+// android pt google 809074699671-b1jc0n7mg24np6johdf9jslauoce2lm0.apps.googleusercontent.com
 import React, {useState} from 'react'
 import {View, Text, StyleSheet, ScrollView, Alert } from 'react-native'
 import CustomInput from '../../components/CustomInput'
@@ -5,9 +6,12 @@ import CustomButton from '../../components/CustomButton'
 import axios from 'axios'
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
-
-
+GoogleSignin.configure({
+  webClientId: '809074699671-b1jc0n7mg24np6johdf9jslauoce2lm0.apps.googleusercontent.com',
+  scopes: ['profile', 'email'],
+});
 
 const SignInAsDoctorScreen = () => {
     const [doctorName, setUsername]= useState('');
@@ -38,8 +42,24 @@ const SignInAsDoctorScreen = () => {
         console.warn("Forgot password");
     }
 
-    const onSignInWithGoogle = () => {
-        console.warn("Sign in with Google");
+    const onSignInWithGoogle = async() => {
+        try{
+          // Start the Google sign-in flow
+      await GoogleSignin.signIn();
+      
+      // Handle the sign-in success
+      const { accessToken, idToken } = await GoogleSignin.getTokens();
+      // Send the tokens to your Node.js server for verification
+      const response = await axios.post('http://localhost:5000/signinwithgoogle', {
+        token: idToken,
+      });
+      await AsyncStorage.setItem('token', accessToken);
+         navigation.navigate('QRCodeScannerScreen');
+         console.warn("Login succesfull");
+        }
+        catch (error) {
+          console.error(error);
+        }
     }
 
     const onSignUpPressed = () => {

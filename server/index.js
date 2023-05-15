@@ -117,6 +117,33 @@ app.post('/loginmedicalassistant', async (req, res) => {
   }
 });
 
+//signin with google 
+
+const users = [];
+
+function upsert(array, item){
+  const i = array.findIndex(_item => _item.email === item.email);
+  if(i > -1) array[i] = item;
+  else array.push(item);
+}
+ app.post('/signinwithgoogle', async (req, res) => {
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: '809074699671-b1jc0n7mg24np6johdf9jslauoce2lm0.apps.googleusercontent.com',
+    });
+    const { name, email } = ticket.getPayload();
+    upsert(users, { name, email });
+    res.status(201).json({ name, email });
+    res.json({ name, email });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+  });
+
+
 //create a pacient
 app.post('/pacients', async (req, res) => {
   try {
