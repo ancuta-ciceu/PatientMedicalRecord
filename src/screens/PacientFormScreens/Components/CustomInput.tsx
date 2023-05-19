@@ -29,6 +29,7 @@ export const CustomInput = ({
           onBlur={onBlur}
           placeholder={`${placeholder} *`}
           style={styles.input}
+          placeholderTextColor={'lightgray'}
         />
       )}
     />

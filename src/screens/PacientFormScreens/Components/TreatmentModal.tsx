@@ -40,7 +40,13 @@ export const FormModal = ({
     setLoading(true);
     try {
       const response = await postData(
-        {...data, patientId: patientId},
+        JSON.stringify({
+          patientId: patientId,
+          days: data.days,
+          timesPerDay: data.timesPerDay,
+          medicine: data.medicine,
+          administrationType: data.administrationType,
+        }),
         'http://localhost:5000/treatments',
       );
     } catch (e: any) {
@@ -68,42 +74,42 @@ export const FormModal = ({
         animationInTiming={700}
         animationOutTiming={700}
         swipeDirection={['down']}
-        backdropOpacity={0.9}>
-        <View style={{flex: 1}}>
-          <View style={styles.container}>
-            <Text style={styles.title}>Add Treatment</Text>
-            <CustomInput
-              control={control}
-              name={'medicine'}
-              placeholder={'Medicine name'}
-            />
-            <CustomInput
-              control={control}
-              name={'administrationType'}
-              placeholder={'Administration type'}
-            />
-            <CustomInput
-              control={control}
-              name={'timesPerDay'}
-              placeholder={'Number of times per day'}
-              numerical={true}
-            />
-            <CustomInput
-              control={control}
-              name={'days'}
-              placeholder={'Number of days'}
-              numerical={true}
-            />
-            <DropDownPicker
-              open={open}
-              value={value}
-              items={items}
-              setOpen={setOpen}
-              setValue={setValue}
-              setItems={setItems}
-              theme="DARK"
-            />
-          </View>
+        backdropOpacity={0.9}
+        onBackdropPress={() => setVisibility(false)}
+        animationOut={'slideOutUp'}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Add Treatment</Text>
+          <CustomInput
+            control={control}
+            name={'medicine'}
+            placeholder={'Medicine name'}
+          />
+          <CustomInput
+            control={control}
+            name={'administrationType'}
+            placeholder={'Administration type'}
+          />
+          <CustomInput
+            control={control}
+            name={'timesPerDay'}
+            placeholder={'Number of times per day'}
+            numerical={true}
+          />
+          <CustomInput
+            control={control}
+            name={'days'}
+            placeholder={'Number of days'}
+            numerical={true}
+          />
+          <DropDownPicker
+            open={open}
+            value={value}
+            items={items}
+            setOpen={setOpen}
+            setValue={setValue}
+            setItems={setItems}
+            theme="DARK"
+          />
           <TouchableOpacity
             style={styles.button}
             onPress={handleSubmit(data => {
@@ -120,17 +126,17 @@ export const FormModal = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
+    // padding: 20,
+    // backgroundColor: '#fff',
+    // borderRadius: 10,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 3,
+    // },
+    // shadowOpacity: 0.27,
+    // shadowRadius: 4.65,
+    // elevation: 6,
   },
   title: {
     fontSize: 24,
@@ -148,5 +154,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 5,
     marginTop: 10,
+    zIndex: -1,
   },
 });

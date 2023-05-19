@@ -9,15 +9,16 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import {Controller, FieldValues, useForm} from 'react-hook-form';
+import {Controller, FieldValues, set, useForm} from 'react-hook-form';
 import DatePicker from 'react-native-date-picker';
 import {CustomInput} from './Components/CustomInput';
 import axios from 'axios';
 import {postData} from './Axios/postData';
-import {getDataById} from './Axios/getDataById';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome5';
 import {Icon, lightColors} from '@rneui/themed';
 import {FormModal} from './Components/TreatmentModal';
+import {getDataById} from './Axios/getDataById';
+import LoadingScreen from '../LoadingScreen/LoadingScreen';
 interface Pacient {
   patientId: number;
   cnp: string;
@@ -56,20 +57,30 @@ const initialTreatment: Treatment = {
 
 export const PatientFormForAssistantScreen = () => {
   const [patient, setPatient] = useState<Pacient>(initialPacient);
+  const [loading, setLoading] = useState(false);
   const [treatments, setTreatments] = useState<Treatment[]>([initialTreatment]);
   const [data, setData] = useState('');
-  const getPatientById = async (id: string) => {
-    const data = await fetch(`http://localhost:5000/pacients/${id}`, {
-      method: 'GET',
-    }).catch(err => console.log(err + 1));
-    setPatient(await data?.json());
-  };
+  // const getPatientById = async (id: string) => {
+  //   setLoading(true);
+  //   const data = await fetch(`http://localhost:5000/pacients/${id}`, {
+  //     method: 'GET',
+  //   })
+  //     .catch(err => console.log(err + 1))
+  //     .finally(() => setLoading(false));
+  //   setPatient(await data?.json());
+  // };
 
+  console.log(loading);
   useEffect(() => {
-    getDataById('http://localhost:5000/pacients/1', setPatient);
-    getDataById('http://localhost:5000/treatments/1', setTreatments);
+    getDataById('http://localhost:5000/pacients/2', setPatient, setLoading);
+    getDataById(
+      'http://localhost:5000/treatments/2',
+      setTreatments,
+      setLoading,
+    );
   }, []);
 
+  console.log(patient);
   useEffect(() => {
     console.log(treatments);
   }, [treatments]);
@@ -82,7 +93,6 @@ export const PatientFormForAssistantScreen = () => {
     sex: string;
   }
 
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const onSubmitPressed = async (data: FieldValues) => {
     if (loading) {
@@ -94,8 +104,16 @@ export const PatientFormForAssistantScreen = () => {
 
     setLoading(true);
     try {
-      const response = await postData(data, 'http://localhost:5000/pacients');
-      console.log(response);
+      const response = await postData(
+        JSON.stringify({
+          admissionDate: data.admissionDate,
+          age: data.age,
+          cnp: data.cnp,
+          patientName: data.patientName,
+          sex: data.sex,
+        }),
+        'http://localhost:5000/pacients',
+      ).then(() => setLoading(false));
     } catch (e: any) {
       Alert.alert('Something went wrong', e.message);
     } finally {
@@ -107,10 +125,11 @@ export const PatientFormForAssistantScreen = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const [date, setDate] = useState(new Date());
-  return patient.cnp !== '' ? (
+  return loading ? (
+    <LoadingScreen />
+  ) : patient.cnp !== '' ? (
     <View style={styles.container}>
       <Text style={styles.title}>Patient Form</Text>
-      {loading && <ActivityIndicator />}
       <CustomInput
         control={control}
         name={'patientName'}
@@ -178,7 +197,12 @@ export const PatientFormForAssistantScreen = () => {
                   <Text style={styles.label}>Name:</Text>
                   <Text style={styles.value}>{treatment.medicine}</Text>
                 </View>
-                <Icon raised name="prescription-bottle" type="font-awesome-5" />
+                <Icon
+                  raised
+                  name="prescription-bottle"
+                  type="font-awesome-5"
+                  color="#A399A9"
+                />
               </View>
 
               <View style={styles.section}>
@@ -220,9 +244,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#A399A9',
   },
   value: {
     fontSize: 16,
+    color: '#A399A9',
   },
   section: {
     backgroundColor: lightColors.grey5,
