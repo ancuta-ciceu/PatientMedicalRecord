@@ -1,31 +1,8 @@
 import {Text, View, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import Modal from 'react-native-modal';
 import {Icon, lightColors} from '@rneui/themed';
-
-interface FormModalProps {
-  isVisible: boolean;
-  setVisibility: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const FormModal = ({isVisible, setVisibility}: FormModalProps) => {
-  return (
-    <View>
-      <Modal
-        isVisible={isVisible}
-        animationIn={'slideInUp'}
-        animationInTiming={700}
-        animationOutTiming={700}
-        swipeDirection={['down']}
-        backdropOpacity={0.9}>
-        <View style={{flex: 1}}>
-          <Text>Hello!</Text>
-          <Button title="Hide modal" onPress={() => setVisibility(false)} />
-        </View>
-      </Modal>
-    </View>
-  );
-};
+import {useForm} from 'react-hook-form';
+import {FormModal} from './Components/TreatmentModal';
 
 interface Pacient {
   patientId: number;
@@ -45,17 +22,36 @@ const initialPacient: Pacient = {
   admissionDate: '',
 };
 
+export interface Treatment {
+  treatmentId: number;
+  patientId: number;
+  days: number;
+  timesPerDay: number;
+  medicine: string;
+  administrationType: string;
+}
+
+const initialTreatment: Treatment = {
+  patientId: 0,
+  treatmentId: 0,
+  administrationType: '',
+  medicine: '',
+  days: 0,
+  timesPerDay: 0,
+};
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 };
 
-export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
-  const {id} = route.params;
+export const PatientFormForDoctorScreen = () => {
+  const {control, handleSubmit} = useForm();
   const [patient, setPatient] = useState<Pacient>(initialPacient);
+  const [treatment, setTreatment] = useState<Treatment>(initialTreatment);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const getPatientById = async () => {
+  const getPatientById = async (id: string) => {
     const data = await fetch(`http://localhost:5000/pacients/${id}`, {
       method: 'GET',
     }).catch(err => console.log(err + 1));
@@ -63,7 +59,7 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
   };
 
   useEffect(() => {
-    getPatientById();
+    getPatientById('1');
   }, []);
 
   return (
@@ -71,35 +67,40 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
       <View style={[styles.section, styles.iconSection]}>
         <View style={{marginRight: 110}}>
           <Text style={styles.label}>Name:</Text>
-          <Text style={styles.value}>{patient?.patientName}</Text>
+          <Text style={styles.value}>{patient.patientName}</Text>
         </View>
         <Icon raised name="person" type="ionicon" color="#f50" />
       </View>
 
       <View style={styles.section}>
         <Text style={styles.label}>Age:</Text>
-        <Text style={styles.value}>{patient?.age}</Text>
+        <Text style={styles.value}>{patient.age}</Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.label}>CNP:</Text>
-        <Text style={styles.value}>{patient?.cnp}</Text>
+        <Text style={styles.value}>{patient.cnp}</Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.label}>Sex:</Text>
-        <Text style={styles.value}>{patient?.sex}</Text>
+        <Text style={styles.value}>{patient.sex}</Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.label}>Admission date:</Text>
-        <Text style={styles.value}>{formatDate(patient?.admissionDate)}</Text>
+        <Text style={styles.value}>{formatDate(patient.admissionDate)}</Text>
       </View>
       <TouchableOpacity style={{marginTop: 20}}>
         <Button title="Show modal" onPress={() => setModalVisible(true)} />
       </TouchableOpacity>
-
-      <FormModal isVisible={isModalVisible} setVisibility={setModalVisible} />
+      <FormModal
+        isVisible={isModalVisible}
+        setVisibility={setModalVisible}
+        control={control}
+        setTreatment={setTreatment}
+        patientId={patient.patientId}
+      />
     </View>
   );
 };
