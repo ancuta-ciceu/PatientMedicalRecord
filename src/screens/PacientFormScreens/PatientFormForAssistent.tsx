@@ -1,9 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {Text, StyleSheet, View, TouchableOpacity, Alert} from 'react-native';
-import {Controller, FieldValues, useForm} from 'react-hook-form';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Alert,
+  Button,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
+import {Controller, FieldValues, set, useForm} from 'react-hook-form';
 import DatePicker from 'react-native-date-picker';
 import {CustomInput} from './Components/CustomInput';
 import axios from 'axios';
+import {postData} from './Axios/postData';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome5';
+import {Icon, lightColors} from '@rneui/themed';
+import {FormModal} from './Components/TreatmentModal';
+import {getDataById} from './Axios/getDataById';
+import LoadingScreen from '../LoadingScreen/LoadingScreen';
 interface Pacient {
   patientId: number;
   cnp: string;
@@ -14,6 +29,7 @@ interface Pacient {
 }
 
 interface Treatment {
+  treatmentId: number;
   patientId: number;
   days: number;
   timesPerDay: number;
@@ -31,6 +47,7 @@ const initialPacient: Pacient = {
 };
 
 const initialTreatment: Treatment = {
+  treatmentId: 0,
   patientId: 0,
   days: 0,
   timesPerDay: 0,
@@ -38,25 +55,35 @@ const initialTreatment: Treatment = {
   administrationType: '',
 };
 
-export const PatientFormForAssistantScreen = ({route}: {route: any}) => {
-  const {id} = route.params;
+export const PatientFormForAssistantScreen = () => {
   const [patient, setPatient] = useState<Pacient>(initialPacient);
-  const [treatment, setTreatment] = useState<Treatment>(initialTreatment);
+  const [loading, setLoading] = useState(false);
+  const [treatments, setTreatments] = useState<Treatment[]>([initialTreatment]);
   const [data, setData] = useState('');
   // const getPatientById = async (id: string) => {
+  //   setLoading(true);
   //   const data = await fetch(`http://localhost:5000/pacients/${id}`, {
   //     method: 'GET',
-  //   }).catch(err => console.log(err + 1));
+  //   })
+  //     .catch(err => console.log(err + 1))
+  //     .finally(() => setLoading(false));
   //   setPatient(await data?.json());
   // };
-  //
-  // useEffect(() => {
-  //   getPatientById('7');
-  // }, []);
-  //
-  // useEffect(() => {
-  //   console.log(patient);
-  // }, [patient]);
+
+  console.log(loading);
+  useEffect(() => {
+    getDataById('http://localhost:5000/pacients/2', setPatient, setLoading);
+    getDataById(
+      'http://localhost:5000/treatments/2',
+      setTreatments,
+      setLoading,
+    );
+  }, []);
+
+  console.log(patient);
+  useEffect(() => {
+    console.log(treatments);
+  }, [treatments]);
 
   interface submittedPatientData {
     admissionDate: Date;
@@ -66,70 +93,41 @@ export const PatientFormForAssistantScreen = ({route}: {route: any}) => {
     sex: string;
   }
 
-  const postPatient = async (data: FieldValues) => {
-    const response = fetch('http://localhost:5000/pacients', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        admissionDate: data.admissionDate,
-        age: data.age,
-        cnp: data.cnp,
-        patientName: data.patientName,
-        sex: data.sex,
-      }),
-    }).then(res => console.log(res));
-    // const response = await axios
-    //   .post('http://localhost:5000/pacients', {
-    //     //   data: {
-    //     //     admissionDate: data.admissionDate,
-    //     //     age: data.age,
-    //     //     cnp: data.cnp,
-    //     //     patientName: data.patientName,
-    //     //     sex: data.sex,
-    //     //   },
-    //     data: {
-    //       admissionDate: '2023-05-19T16:10:40.142Z',
-    //       age: 21,
-    //       cnp: 'a cnp',
-    //       patientName: 'pacient name',
-    //       sex: 'fem',
-    //     },
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Access-Control-Allow-Origin': '*',
-    //     },
-    //   })
-    //   .then(response => console.log(response))
-    //   // .then(response => response.json())
-    //   .catch(err => console.log(err));
-  };
-
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const onSubmitPressed = async (data: FieldValues) => {
     if (loading) {
       return;
     }
 
-    console.log(JSON.stringify(data));
+    patient.patientName === '' && setError(true);
+    setTimeout(() => setError(false), 2000);
 
     setLoading(true);
     try {
-      const response = await postPatient(data);
-      console.log(response);
+      const response = await postData(
+        JSON.stringify({
+          admissionDate: data.admissionDate,
+          age: data.age,
+          cnp: data.cnp,
+          patientName: data.patientName,
+          sex: data.sex,
+        }),
+        'http://localhost:5000/pacients',
+      ).then(() => setLoading(false));
     } catch (e: any) {
-      Alert.alert('Oops', e.message);
+      Alert.alert('Something went wrong', e.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const {control, handleSubmit} = useForm();
 
   const [open, setOpen] = useState<boolean>(false);
   const [date, setDate] = useState(new Date());
-  return (
+  return loading ? (
+    <LoadingScreen />
+  ) : patient.cnp !== '' ? (
     <View style={styles.container}>
       <Text style={styles.title}>Patient Form</Text>
       <CustomInput
@@ -150,8 +148,9 @@ export const PatientFormForAssistantScreen = ({route}: {route: any}) => {
         onPress={() => {
           setOpen(true);
         }}>
-        <Text style={styles.buttonText1}>Admission date</Text>
+        <Text style={styles.buttonText1}>Admission date *</Text>
       </TouchableOpacity>
+      {error && <Text>eroare</Text>}
       <Controller
         control={control}
         name={'admissionDate'}
@@ -174,10 +173,57 @@ export const PatientFormForAssistantScreen = ({route}: {route: any}) => {
       />
       <TouchableOpacity
         style={styles.button}
-        onPress={handleSubmit(data => onSubmitPressed(data))}>
+        onPress={handleSubmit(data => {
+          onSubmitPressed(data);
+        })}>
         <Text style={styles.buttonText}>Submit</Text>
       </TouchableOpacity>
     </View>
+  ) : (
+    <ScrollView>
+      {/*<Icon*/}
+      {/*  name="heartbeat"*/}
+      {/*  type="font-awesome"*/}
+      {/*  color="#f50"*/}
+      {/*  onPress={() => console.log('hello')}*/}
+      {/*/>*/}
+
+      <View style={styles.containerTreatment}>
+        {treatments?.map(treatment => (
+          <React.Fragment key={treatment.treatmentId}>
+            <View style={styles.sectionTreatment}>
+              <View style={[styles.section, styles.iconSection]}>
+                <View>
+                  <Text style={styles.label}>Name:</Text>
+                  <Text style={styles.value}>{treatment.medicine}</Text>
+                </View>
+                <Icon
+                  raised
+                  name="prescription-bottle"
+                  type="font-awesome-5"
+                  color="#A399A9"
+                />
+              </View>
+
+              <View style={styles.section}>
+                <Text style={styles.label}>Administration Type:</Text>
+                <Text style={styles.value}>{treatment.administrationType}</Text>
+              </View>
+
+              <View style={styles.section}>
+                <Text style={styles.label}>Number of days:</Text>
+                <Text style={styles.value}>{treatment.days}</Text>
+              </View>
+
+              <View style={styles.section}>
+                <Text style={styles.label}>Number of times/day:</Text>
+                <Text style={styles.value}>{treatment.timesPerDay}</Text>
+              </View>
+            </View>
+          </React.Fragment>
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
@@ -187,14 +233,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
+    backgroundColor: '#EAEAFF',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
   },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#A399A9',
+  },
+  value: {
+    fontSize: 16,
+    color: '#A399A9',
+  },
+  section: {
+    backgroundColor: lightColors.grey5,
+    // borderRadius: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    marginBottom: 1,
+  },
   button: {
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#A399A9',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -217,5 +281,25 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  iconSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  containerTreatment: {
+    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  sectionTreatment: {
+    marginBottom: 10,
   },
 });

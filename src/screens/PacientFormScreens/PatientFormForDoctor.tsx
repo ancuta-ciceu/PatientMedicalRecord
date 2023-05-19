@@ -1,31 +1,9 @@
 import {Text, View, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import Modal from 'react-native-modal';
 import {Icon, lightColors} from '@rneui/themed';
-
-interface FormModalProps {
-  isVisible: boolean;
-  setVisibility: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const FormModal = ({isVisible, setVisibility}: FormModalProps) => {
-  return (
-    <View>
-      <Modal
-        isVisible={isVisible}
-        animationIn={'slideInUp'}
-        animationInTiming={700}
-        animationOutTiming={700}
-        swipeDirection={['down']}
-        backdropOpacity={0.9}>
-        <View style={{flex: 1}}>
-          <Text>Hello!</Text>
-          <Button title="Hide modal" onPress={() => setVisibility(false)} />
-        </View>
-      </Modal>
-    </View>
-  );
-};
+import {useForm} from 'react-hook-form';
+import {FormModal} from './Components/TreatmentModal';
+import {logger} from 'sequelize/types/utils/logger';
 
 interface Pacient {
   patientId: number;
@@ -45,20 +23,45 @@ const initialPacient: Pacient = {
   admissionDate: '',
 };
 
+export interface Treatment {
+  treatmentId: number;
+  patientId: number;
+  days: number;
+  timesPerDay: number;
+  medicine: string;
+  administrationType: string;
+}
+
+const initialTreatment: Treatment = {
+  patientId: 0,
+  treatmentId: 0,
+  administrationType: '',
+  medicine: '',
+  days: 0,
+  timesPerDay: 0,
+};
+
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 };
 
 export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
-  const {id} = route.params;
+  //const {id} = route?.params;
+  const id = '2';
+  const {control, handleSubmit} = useForm();
   const [patient, setPatient] = useState<Pacient>(initialPacient);
+  const [treatment, setTreatment] = useState<Treatment>(initialTreatment);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const getPatientById = async () => {
-    const data = await fetch(`http://localhost:5000/pacients/${id}`, {
+    console.log('aici');
+    const data = await fetch('http://localhost:5000/pacients/2', {
       method: 'GET',
-    }).catch(err => console.log(err + 1));
+    })
+      //.then(res => console.log(res))
+      .catch(err => console.log(err + 1));
+    //console.log(data);
     setPatient(await data?.json());
   };
 
@@ -73,7 +76,7 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
           <Text style={styles.label}>Name:</Text>
           <Text style={styles.value}>{patient?.patientName}</Text>
         </View>
-        <Icon raised name="person" type="ionicon" color="#f50" />
+        <Icon raised name="person" type="ionicon" color="#A399A9" />
       </View>
 
       <View style={styles.section}>
@@ -95,11 +98,18 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
         <Text style={styles.label}>Admission date:</Text>
         <Text style={styles.value}>{formatDate(patient?.admissionDate)}</Text>
       </View>
-      <TouchableOpacity style={{marginTop: 20}}>
-        <Button title="Show modal" onPress={() => setModalVisible(true)} />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => setModalVisible(true)}>
+        <Text style={styles.buttonText}>Show modal</Text>
       </TouchableOpacity>
-
-      <FormModal isVisible={isModalVisible} setVisibility={setModalVisible} />
+      <FormModal
+        isVisible={isModalVisible}
+        setVisibility={setModalVisible}
+        control={control}
+        setTreatment={setTreatment}
+        patientId={patient?.patientId}
+      />
     </View>
   );
 };
@@ -122,9 +132,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#A399A9',
   },
   value: {
     fontSize: 16,
+    color: '#A399A9',
   },
   section: {
     backgroundColor: lightColors.grey5,
@@ -136,5 +148,18 @@ const styles = StyleSheet.create({
   iconSection: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+  },
+  button: {
+    backgroundColor: '#A399A9',
+    borderRadius: 8,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
