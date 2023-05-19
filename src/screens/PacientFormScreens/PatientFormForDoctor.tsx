@@ -50,11 +50,12 @@ const formatDate = (dateString: string) => {
   return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 };
 
-export const PatientFormForDoctorScreen = () => {
+export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
+  const {id} = route.params;
   const [patient, setPatient] = useState<Pacient>(initialPacient);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const getPatientById = async (id: string) => {
+  const getPatientById = async () => {
     const data = await fetch(`http://localhost:5000/pacients/${id}`, {
       method: 'GET',
     }).catch(err => console.log(err + 1));
@@ -62,7 +63,7 @@ export const PatientFormForDoctorScreen = () => {
   };
 
   useEffect(() => {
-    getPatientById('7');
+    getPatientById();
   }, []);
 
   return (
@@ -70,29 +71,29 @@ export const PatientFormForDoctorScreen = () => {
       <View style={[styles.section, styles.iconSection]}>
         <View style={{marginRight: 110}}>
           <Text style={styles.label}>Name:</Text>
-          <Text style={styles.value}>{patient.patientName}</Text>
+          <Text style={styles.value}>{patient?.patientName}</Text>
         </View>
         <Icon raised name="person" type="ionicon" color="#f50" />
       </View>
 
       <View style={styles.section}>
         <Text style={styles.label}>Age:</Text>
-        <Text style={styles.value}>{patient.age}</Text>
+        <Text style={styles.value}>{patient?.age}</Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.label}>CNP:</Text>
-        <Text style={styles.value}>{patient.cnp}</Text>
+        <Text style={styles.value}>{patient?.cnp}</Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.label}>Sex:</Text>
-        <Text style={styles.value}>{patient.sex}</Text>
+        <Text style={styles.value}>{patient?.sex}</Text>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.label}>Admission date:</Text>
-        <Text style={styles.value}>{formatDate(patient.admissionDate)}</Text>
+        <Text style={styles.value}>{formatDate(patient?.admissionDate)}</Text>
       </View>
       <TouchableOpacity style={{marginTop: 20}}>
         <Button title="Show modal" onPress={() => setModalVisible(true)} />

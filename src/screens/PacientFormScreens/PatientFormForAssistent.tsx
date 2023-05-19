@@ -38,24 +38,25 @@ const initialTreatment: Treatment = {
   administrationType: '',
 };
 
-export const PatientFormForAssistantScreen = () => {
+export const PatientFormForAssistantScreen = ({route}: {route: any}) => {
+  const {id} = route.params;
   const [patient, setPatient] = useState<Pacient>(initialPacient);
   const [treatment, setTreatment] = useState<Treatment>(initialTreatment);
   const [data, setData] = useState('');
-  const getPatientById = async (id: string) => {
-    const data = await fetch(`http://localhost:5000/pacients/${id}`, {
-      method: 'GET',
-    }).catch(err => console.log(err + 1));
-    setPatient(await data?.json());
-  };
-
-  useEffect(() => {
-    getPatientById('7');
-  }, []);
-
-  useEffect(() => {
-    console.log(patient);
-  }, [patient]);
+  // const getPatientById = async (id: string) => {
+  //   const data = await fetch(`http://localhost:5000/pacients/${id}`, {
+  //     method: 'GET',
+  //   }).catch(err => console.log(err + 1));
+  //   setPatient(await data?.json());
+  // };
+  //
+  // useEffect(() => {
+  //   getPatientById('7');
+  // }, []);
+  //
+  // useEffect(() => {
+  //   console.log(patient);
+  // }, [patient]);
 
   interface submittedPatientData {
     admissionDate: Date;
@@ -66,19 +67,44 @@ export const PatientFormForAssistantScreen = () => {
   }
 
   const postPatient = async (data: FieldValues) => {
-    const response = await axios
-      .post('http://localhost:5000/pacients', {
-        data: {
-          admissionDate: data.admissionDate,
-          age: data.age,
-          cnp: data.cnp,
-          patientName: data.patientName,
-          sex: data.sex,
-        },
-      })
-      .then(response => console.log(response))
-      // .then(response => response.json())
-      .catch(err => console.log(err));
+    const response = fetch('http://localhost:5000/pacients', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        admissionDate: data.admissionDate,
+        age: data.age,
+        cnp: data.cnp,
+        patientName: data.patientName,
+        sex: data.sex,
+      }),
+    }).then(res => console.log(res));
+    // const response = await axios
+    //   .post('http://localhost:5000/pacients', {
+    //     //   data: {
+    //     //     admissionDate: data.admissionDate,
+    //     //     age: data.age,
+    //     //     cnp: data.cnp,
+    //     //     patientName: data.patientName,
+    //     //     sex: data.sex,
+    //     //   },
+    //     data: {
+    //       admissionDate: '2023-05-19T16:10:40.142Z',
+    //       age: 21,
+    //       cnp: 'a cnp',
+    //       patientName: 'pacient name',
+    //       sex: 'fem',
+    //     },
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Access-Control-Allow-Origin': '*',
+    //     },
+    //   })
+    //   .then(response => console.log(response))
+    //   // .then(response => response.json())
+    //   .catch(err => console.log(err));
   };
 
   const [loading, setLoading] = useState(false);
