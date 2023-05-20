@@ -32,9 +32,6 @@ const SignInAsScreen = () => {
     navigation.navigate('PacientFormForAssistantScreen');
   };
 
-  const onSignUpPressed = () => {
-    navigation.navigate('SignUpDoctorScreen');
-  };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -55,7 +52,6 @@ const SignInAsScreen = () => {
           text="Patient Form For Assistent Screen"
           onPress={onPatientFormAssistantPressed}
         />
-        <CustomButton text="SignUp" onPress={onSignUpPressed} />
       </View>
     </ScrollView>
   );
