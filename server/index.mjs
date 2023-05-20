@@ -1,11 +1,21 @@
-const express = require('express');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import pool from './db.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+
+
+
+//const express = express;
 const app = express();
-const bodyParser = require('body-parser');
-const cors = require('cors');
-require('./db');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const pool = require('./db');
+//const bodyParser = require('body-parser');
+// const cors = require('cors');
+// require('./db');
+// const bcrypt = require('bcrypt');
+// const jwt = require('jsonwebtoken');
+// const pool = require('./db');
 
 app.use(bodyParser.json({type: 'application/json; charset=utf-8'}));
 
@@ -181,18 +191,32 @@ app.get('/treatments', async (req, res) => {
 });
 app.get('/treatments/:id', async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const treatment = await pool.query(
       'SELECT * FROM treatment WHERE "patientId" = $1',
-      [id],
+      [id]
     );
+
+    if (treatment.rowCount === 0) {
+      const patientExists = await pool.query(
+        'SELECT EXISTS(SELECT 1 FROM pacient WHERE "patientId" = $1)',
+        [id]
+      );
+
+      if (patientExists.rows[0].exists) {
+        return res.status(200).json([]); // Empty treatments for the specified patientId
+      } else {
+        return res.status(404).json({ error: 'Patient not found' });
+      }
+    }
+
     res.json(treatment.rows);
   } catch (err) {
     console.error(err.message);
+    res.status(500).json({ error: 'Server error' });
   }
 });
-const port = 5000;
-app.listen(port, () => {
-  //console.log('server has started on port ${port}');
-  console.log(`Server listening on port ${port}`);
-});
+
+
+
+export default app;
