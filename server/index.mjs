@@ -68,40 +68,87 @@ app.post('/createmedicalassistant', async (req, res) => {
   }
 });
 
-//try to login as doctor
-app.get('/logindoctor', async (req, res) => {
-  try {
-    const {doctor_name, doctor_passhash} = req.body;
-    const doctor_user = await pool.query(
-      'SELECT doctor_name FROM doctor WHERE doctor_name = $1',
-      [doctor_name],
-    );
-    //console_log(doctor_user);
-    res.json(doctor_user.rows);
-  } catch (err) {
-    console.error(err.message);
-  }
-});
+//try to login as a doctor
 
-/*app.get('/logindoctor', async (req, res) => {
-    try{
+app.post('/logindoctor', async (req, res) => {
+  try {
     const { doctor_name, doctor_passhash } = req.body;
-    const doctor_user = await Doctor.findOne({ where: { doctor_name } });
-    //const doctor_user = await pool.query('SELECT doctor_name FROM doctor WHERE doctor_name = $1', [doctor_name]);
-    if (!doctor_user) {
+    const doctor_user = await pool.query('SELECT doctor_name, doctor_passhash FROM doctor WHERE doctor_name = $1', [doctor_name]);
+    
+    if (doctor_user.rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
-    const isPasswordValid = await bcrypt.compare(doctor_passhash, doctor_user.doctor_passhash);
+    
+    const { doctor_passhash: hashedPassword } = doctor_user.rows[0];
+    const isPasswordValid = await bcrypt.compare(doctor_passhash, hashedPassword);
+    
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid password' });
     }
+    
     const token = jwt.sign({ doctor_name }, secretKey, { expiresIn: '1h' });
     res.json({ token });
-    }catch (err) {
-      console.error(err.message);
-    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
-  });*/
+
+
+
+//try to login as a medical assistant
+
+app.post('/loginmedicalassistant', async (req, res) => {
+  try {
+    const { medical_assistant_name, medical_assistant_passhash } = req.body;
+    const medical_assistant_user = await pool.query('SELECT medical_assistant_name, medical_assistant_passhash FROM medical_assistant WHERE medical_assistant_name = $1', [medical_assistant_name]);
+    
+    if (medical_assistant_user.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    const { medical_assistant_passhash: hashedPassword } = medical_assistant_user.rows[0];
+    const isPasswordValid = await bcrypt.compare(medical_assistant_passhash, hashedPassword);
+    
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid password' });
+    }
+    
+    const token = jwt.sign({ medical_assistant_name }, secretKey, { expiresIn: '1h' });
+    res.json({ token });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+//signin with google 
+
+const users = [];
+
+function upsert(array, item){
+  const i = array.findIndex(_item => _item.email === item.email);
+  if(i > -1) array[i] = item;
+  else array.push(item);
+}
+ app.post('/signinwithgoogle', async (req, res) => {
+  try {
+    const { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: '809074699671-b1jc0n7mg24np6johdf9jslauoce2lm0.apps.googleusercontent.com',
+    });
+    const { name, email } = ticket.getPayload();
+    upsert(users, { name, email });
+    res.status(201).json({ name, email });
+    res.json({ name, email });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+  });
+
 
 //create a pacient
 app.post('/pacients', async (req, res) => {
