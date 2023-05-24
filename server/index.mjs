@@ -4,7 +4,7 @@ import cors from 'cors';
 import pool from './db.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
+import crypto from 'crypto';
 
 
 
@@ -17,6 +17,7 @@ const app = express();
 // const jwt = require('jsonwebtoken');
 // const pool = require('./db');
 
+const secretKey = crypto.randomBytes(32).toString('hex');
 app.use(bodyParser.json({type: 'application/json; charset=utf-8'}));
 
 //middleware
@@ -68,36 +69,30 @@ app.post('/createmedicalassistant', async (req, res) => {
   }
 });
 
-//try to login as a doctor
 
+//login doctor
 app.post('/logindoctor', async (req, res) => {
   try {
-    const { doctor_name, doctor_passhash } = req.body;
-    const doctor_user = await pool.query('SELECT doctor_name, doctor_passhash FROM doctor WHERE doctor_name = $1', [doctor_name]);
-    
-    if (doctor_user.rows.length === 0) {
-      return res.status(404).json({ message: 'User not found' });
+    const {doctor_name, doctor_passhash} = req.body;
+    const doctor = await pool.query('SELECT doctor_name, doctor_passhash FROM doctor WHERE doctor_name = $1', [doctor_name]);
+
+    if (doctor.rows.length === 0) {
+      return res.status(401).json({message: 'User not found'});
     }
     
-    const { doctor_passhash: hashedPassword } = doctor_user.rows[0];
+    const {doctor_passhash: hashedPassword} = doctor.rows[0];
     const isPasswordValid = await bcrypt.compare(doctor_passhash, hashedPassword);
-    
+
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid password' });
+      return res.status(401).json({message: 'Invalid password'});
     }
-    
-    const token = jwt.sign({ doctor_name }, secretKey, { expiresIn: '1h' });
-    res.json({ token });
+    const token = jwt.sign({doctor_name}, secretKey, {expiresIn: '1h'});
+    res.json({token});
   } catch (err) {
     console.error(err.message);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({message: 'Server error'});
   }
 });
-
-
-
-
-//try to login as a medical assistant
 
 app.post('/loginmedicalassistant', async (req, res) => {
   try {
@@ -124,7 +119,7 @@ app.post('/loginmedicalassistant', async (req, res) => {
 });
 
 //signin with google 
-
+/*
 const users = [];
 
 function upsert(array, item){
@@ -148,6 +143,9 @@ function upsert(array, item){
     res.status(500).json({ message: 'Server error' });
   }
   });
+*/
+
+
 
 
 //create a pacient
@@ -264,6 +262,10 @@ app.get('/treatments/:id', async (req, res) => {
   }
 });
 
+const port = 5000;
 
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 export default app;
