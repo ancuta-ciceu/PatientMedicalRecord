@@ -53,6 +53,7 @@ import CustomInput from '../../components/CustomInput'
             }),
           };
           const response = await fetch('http://localhost:5000/createdoctor', requestOptions);
+          console.log("Signup successful!");
           const data = await response.json();
         } else {
           setFormErrors(errors);
