@@ -20,9 +20,9 @@ const SignInAsScreen = () => {
     navigation.navigate('SignInAsMedicalAssistantScreen');
   };
 
-  const onScanQRPressed = () => {
-    navigation.navigate('QRCodeScannerScreen');
-  };
+  // const onScanQRPressed = () => {
+  //   navigation.navigate('QRCodeScannerScreen');
+  // };
 
   const onPatientFormDoctorPressed = () => {
     navigation.navigate('PacientFormForDoctorScreen');
@@ -31,7 +31,6 @@ const SignInAsScreen = () => {
   const onPatientFormAssistantPressed = () => {
     navigation.navigate('PacientFormForAssistantScreen');
   };
-
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -43,7 +42,7 @@ const SignInAsScreen = () => {
           text="Medical assistant"
           onPress={onMedicalAssistantPressed}
         />
-        <CustomButton text="Scan QR" onPress={onScanQRPressed} />
+        {/*<CustomButton text="Scan QR" onPress={onScanQRPressed} />*/}
         <CustomButton
           text="Patient Form For Doctor Screen"
           onPress={onPatientFormDoctorPressed}

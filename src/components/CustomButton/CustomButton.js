@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     marginLeft: 50,
   },
   container_PRIMARY: {
-    backgroundColor: '#C4BBFF',
+    backgroundColor: '#A399A9',
   },
   container_SECONDARY: {
     marginVertical: 170,
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   text_SECONDARY: {
-    color: '#2E5F9B',
+    color: '#1f072e',
   },
 
   text_TERTIARY: {
