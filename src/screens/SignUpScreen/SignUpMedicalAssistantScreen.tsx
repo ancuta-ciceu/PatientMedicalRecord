@@ -2,6 +2,7 @@ import React, { useState} from 'react';
 import {Text, StyleSheet, View} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import CustomInput from '../../components/CustomInput'
+import {useNavigation} from '@react-navigation/native';
 
 
     interface FormErrors {
@@ -15,6 +16,7 @@ import CustomInput from '../../components/CustomInput'
       const [MedicalAssistantEmail, setMedicalAssistantEmail] = useState('');
       const [MedicalAssistantPassword, setMedicalAssistantPassword] = useState('');
       const [formErrors, setFormErrors] = useState<FormErrors>({});
+      const navigation = useNavigation();
     
       const handleSubmit = async() => {
         const errors: FormErrors = {};
@@ -47,6 +49,7 @@ import CustomInput from '../../components/CustomInput'
             }),
           };
           const response = await fetch('http://localhost:5000/createmedicalassistant', requestOptions);
+          navigation.navigate('SignInAsMedicalAssistantScreen');
           console.log("Signup successful!");
           const data = await response.json();
         } else {

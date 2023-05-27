@@ -38,10 +38,6 @@ const SignInAsDoctorScreen = () => {
 
     }
 
-    const onForgotPasswordPressed = () => {
-        console.warn("Forgot password");
-    }
-
     const onSignInWithGoogle = async() => {
         try{
           // Start the Google sign-in flow
@@ -81,12 +77,6 @@ const SignInAsDoctorScreen = () => {
               value={doctorPassword} 
               setValue={setPassword} 
               secureTextEntry={true} 
-            />
-
-            <CustomButton 
-              text="Forgot password?" 
-              onPress={onForgotPasswordPressed} 
-              type='TERTIARY'
             />
 
             <CustomButton 

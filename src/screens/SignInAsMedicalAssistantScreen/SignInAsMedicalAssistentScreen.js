@@ -36,10 +36,6 @@ const SignInAsMedicalAssistantScreen = () => {
         }
     }
 
-    const onForgotPasswordPressed =  () => {
-        console.warn("Forgot password");
-    }
-
     const onSignInWithGoogle = async () => {
       try{
         // Start the Google sign-in flow
@@ -80,11 +76,6 @@ const SignInAsMedicalAssistantScreen = () => {
               secureTextEntry={true} 
             />
 
-            <CustomButton 
-              text="Forgot password?" 
-              onPress={onForgotPasswordPressed} 
-              type='TERTIARY'
-            />
             <CustomButton text="Login" onPress={onSignInPressed}/>
             <CustomButton 
               text="Sign In with Google" 
