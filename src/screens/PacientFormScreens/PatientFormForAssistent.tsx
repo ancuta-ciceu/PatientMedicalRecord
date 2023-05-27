@@ -19,6 +19,7 @@ import {Icon, lightColors} from '@rneui/themed';
 import {FormModal} from './Components/TreatmentModal';
 import {getDataById} from './Axios/getDataById';
 import LoadingScreen from '../LoadingScreen/LoadingScreen';
+import {useNavigation} from '@react-navigation/native';
 interface Pacient {
   patientId: number;
   cnp: string;
@@ -55,11 +56,13 @@ const initialTreatment: Treatment = {
   administrationType: '',
 };
 
-export const PatientFormForAssistantScreen = () => {
+export const PatientFormForAssistantScreen = ({route}) => {
   const [patient, setPatient] = useState<Pacient>(initialPacient);
   const [loading, setLoading] = useState(false);
   const [treatments, setTreatments] = useState<Treatment[]>([initialTreatment]);
   const [data, setData] = useState('');
+  const navigation = useNavigation();
+  //const {id} = route.params;
   // const getPatientById = async (id: string) => {
   //   setLoading(true);
   //   const data = await fetch(`http://localhost:5000/pacients/${id}`, {
@@ -72,12 +75,18 @@ export const PatientFormForAssistantScreen = () => {
 
   console.log(loading);
   useEffect(() => {
-    getDataById('http://localhost:5000/pacients/2', setPatient, setLoading);
-    getDataById(
-      'http://localhost:5000/treatments/2',
-      setTreatments,
-      setLoading,
-    );
+    route.params?.id &&
+      getDataById(
+        'http://localhost:5000/pacients/' + route.params?.id,
+        setPatient,
+        setLoading,
+      );
+    route.params?.id &&
+      getDataById(
+        'http://localhost:5000/treatments/' + route.params?.id,
+        setTreatments,
+        setLoading,
+      );
   }, []);
 
   console.log(patient);
@@ -113,7 +122,11 @@ export const PatientFormForAssistantScreen = () => {
           sex: data.sex,
         }),
         'http://localhost:5000/pacients',
-      ).then(() => setLoading(false));
+      ).then(() => {
+        setLoading(false);
+        // @ts-ignore
+        navigation.navigate('AfterAddingPatientDataScreen');
+      });
     } catch (e: any) {
       Alert.alert('Something went wrong', e.message);
     } finally {
@@ -127,7 +140,7 @@ export const PatientFormForAssistantScreen = () => {
   const [date, setDate] = useState(new Date());
   return loading ? (
     <LoadingScreen />
-  ) : patient.cnp !== '' ? (
+  ) : patient.cnp === '' ? (
     <View style={styles.container}>
       <Text style={styles.title}>Patient Form</Text>
       <CustomInput
@@ -188,41 +201,61 @@ export const PatientFormForAssistantScreen = () => {
       {/*  onPress={() => console.log('hello')}*/}
       {/*/>*/}
 
-      <View style={styles.containerTreatment}>
-        {treatments?.map(treatment => (
-          <React.Fragment key={treatment.treatmentId}>
-            <View style={styles.sectionTreatment}>
-              <View style={[styles.section, styles.iconSection]}>
-                <View>
-                  <Text style={styles.label}>Name:</Text>
-                  <Text style={styles.value}>{treatment.medicine}</Text>
+      {treatments.length !== 0 ? (
+        <View style={styles.containerTreatment}>
+          {treatments?.map(treatment => (
+            <React.Fragment key={treatment.treatmentId}>
+              <View style={styles.sectionTreatment}>
+                <View style={[styles.section, styles.iconSection]}>
+                  <View>
+                    <Text style={styles.label}>Name:</Text>
+                    <Text style={styles.value}>{treatment.medicine}</Text>
+                  </View>
+                  <Icon
+                    raised
+                    name="prescription-bottle"
+                    type="font-awesome-5"
+                    color="#A399A9"
+                  />
                 </View>
-                <Icon
-                  raised
-                  name="prescription-bottle"
-                  type="font-awesome-5"
-                  color="#A399A9"
-                />
-              </View>
 
-              <View style={styles.section}>
-                <Text style={styles.label}>Administration Type:</Text>
-                <Text style={styles.value}>{treatment.administrationType}</Text>
-              </View>
+                <View style={styles.section}>
+                  <Text style={styles.label}>Administration Type:</Text>
+                  <Text style={styles.value}>
+                    {treatment.administrationType}
+                  </Text>
+                </View>
 
-              <View style={styles.section}>
-                <Text style={styles.label}>Number of days:</Text>
-                <Text style={styles.value}>{treatment.days}</Text>
-              </View>
+                <View style={styles.section}>
+                  <Text style={styles.label}>Number of days:</Text>
+                  <Text style={styles.value}>{treatment.days}</Text>
+                </View>
 
-              <View style={styles.section}>
-                <Text style={styles.label}>Number of times/day:</Text>
-                <Text style={styles.value}>{treatment.timesPerDay}</Text>
+                <View style={styles.section}>
+                  <Text style={styles.label}>Number of times/day:</Text>
+                  <Text style={styles.value}>{treatment.timesPerDay}</Text>
+                </View>
               </View>
-            </View>
-          </React.Fragment>
-        ))}
-      </View>
+            </React.Fragment>
+          ))}
+        </View>
+      ) : (
+        <View>
+          <Text style={styles.text}>
+            Currently there are no treatments added. Please wait for a medical
+            professional to add them.
+          </Text>
+          <View style={{marginHorizontal: 30, marginTop: 20}}>
+            <TouchableOpacity
+              style={styles.button1}
+              onPress={() =>
+                navigation.navigate('QRCodeScannerScreen', {asMedic: false})
+              }>
+              <Text style={styles.buttonText}>Go back to QR Scanner</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 };
@@ -301,5 +334,13 @@ const styles = StyleSheet.create({
   },
   sectionTreatment: {
     marginBottom: 10,
+  },
+  text: {
+    textAlign: 'center',
+    marginTop: 70,
+    fontSize: 30,
+    marginHorizontal: 15,
+    color: 'lightgray',
+    fontFamily: 'Gill Sans Extrabold',
   },
 });

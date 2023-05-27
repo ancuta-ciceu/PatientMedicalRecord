@@ -7,14 +7,20 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 
-export const QRCodeScannerScreen = () => {
+export const QRCodeScannerScreen = ({route}: {route: any}) => {
   const [data, setData] = useState<String>('');
   const [scanning, setScanning] = useState<boolean>(true);
   const navigation = useNavigation();
+
+  const asMedic = route.params?.asMedic;
+  console.log(`asMedic: ${asMedic}`);
+  const screen = asMedic
+    ? 'PacientFormForDoctorScreen'
+    : 'PacientFormForAssistantScreen';
   useEffect(() => {
     if (!scanning && data !== '') {
       // @ts-ignore
-      navigation.navigate('PacientFormForDoctorScreen', {id: data});
+      navigation.navigate(screen, {id: data});
     }
   }, [scanning, data, navigation]);
 

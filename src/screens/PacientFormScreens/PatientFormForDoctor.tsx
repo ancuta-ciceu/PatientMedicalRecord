@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {Icon, lightColors} from '@rneui/themed';
 import {useForm} from 'react-hook-form';
 import {FormModal} from './Components/TreatmentModal';
-import {logger} from 'sequelize/types/utils/logger';
+import {useNavigation} from '@react-navigation/native';
 
 interface Pacient {
   patientId: number;
@@ -47,29 +47,36 @@ const formatDate = (dateString: string) => {
 };
 
 export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
-  //const {id} = route?.params;
-  const id = '2';
+  const {id} = route?.params;
+
   const {control, handleSubmit} = useForm();
   const [patient, setPatient] = useState<Pacient>(initialPacient);
   const [treatment, setTreatment] = useState<Treatment>(initialTreatment);
   const [isModalVisible, setModalVisible] = useState(false);
+  const navigation = useNavigation();
 
   const getPatientById = async () => {
-    console.log('aici');
-    const data = await fetch('http://localhost:5000/pacients/2', {
+    console.log(`this is the ${id}`);
+    const data = await fetch(`http://localhost:5000/pacients/${id}`, {
       method: 'GET',
     })
       //.then(res => console.log(res))
       .catch(err => console.log(err + 1));
-    //console.log(data);
+    console.log(data);
     setPatient(await data?.json());
   };
 
   useEffect(() => {
-    getPatientById();
-  }, []);
+    route.params?.id && getPatientById();
+  }, [route.params?.id]);
 
-  return (
+  // useEffect(() => {
+  //   getPatientById();
+  // }, []);
+
+  // @ts-ignore
+  // @ts-ignore
+  return patient.cnp !== '' ? (
     <View style={styles.container}>
       <View style={[styles.section, styles.iconSection]}>
         <View style={{marginRight: 110}}>
@@ -110,6 +117,21 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
         setTreatment={setTreatment}
         patientId={patient?.patientId}
       />
+    </View>
+  ) : (
+    <View>
+      <Text style={styles.text}>
+        PLEASE ASK A MEDICAL ASSISTANT TO REGISTER THIS PATIENT
+      </Text>
+      <View style={{marginHorizontal: 30}}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            navigation.navigate('QRCodeScannerScreen', {asMedic: true})
+          }>
+          <Text style={styles.buttonText}>Go back to QR Scanner</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -161,5 +183,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  text: {
+    textAlign: 'center',
+    marginTop: 70,
+    fontSize: 40,
+    color: 'lightgray',
+    fontFamily: 'Gill Sans Extrabold',
   },
 });

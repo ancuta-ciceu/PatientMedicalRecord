@@ -45,7 +45,7 @@ export const FormModal = ({
           days: data.days,
           timesPerDay: data.timesPerDay,
           medicine: data.medicine,
-          administrationType: data.administrationType,
+          administrationType: value,
         }),
         'http://localhost:5000/treatments',
       );
@@ -58,12 +58,12 @@ export const FormModal = ({
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
-    {label: 'Oral', value: 'oral'},
-    {label: 'Injection', value: 'injection'},
-    {label: 'Topical', value: 'topical'},
-    {label: 'Subcutaneous', value: 'subcutaneous'},
-    {label: 'Intravenous', value: 'intravenous'},
-    {label: 'Intramuscular', value: 'intramuscular'},
+    {label: 'Oral', value: 'Oral'},
+    {label: 'Injection', value: 'Injection'},
+    {label: 'Topical', value: 'Topical'},
+    {label: 'Subcutaneous', value: 'Subcutaneous'},
+    {label: 'Intravenous', value: 'Intravenous'},
+    {label: 'Intramuscular', value: 'Intramuscular'},
   ]);
 
   return (
@@ -84,11 +84,11 @@ export const FormModal = ({
             name={'medicine'}
             placeholder={'Medicine name'}
           />
-          <CustomInput
-            control={control}
-            name={'administrationType'}
-            placeholder={'Administration type'}
-          />
+          {/*<CustomInput*/}
+          {/*  control={control}*/}
+          {/*  name={'administrationType'}*/}
+          {/*  placeholder={'Administration type'}*/}
+          {/*/>*/}
           <CustomInput
             control={control}
             name={'timesPerDay'}
@@ -108,7 +108,15 @@ export const FormModal = ({
             setOpen={setOpen}
             setValue={setValue}
             setItems={setItems}
-            theme="DARK"
+            // style={{
+            //   backgroundColor: '#A399A9',
+            // }}
+            translation={{
+              PLACEHOLDER: 'Administration type',
+            }}
+            placeholderStyle={{
+              color: 'lightgray',
+            }}
           />
           <TouchableOpacity
             style={styles.button}
@@ -149,7 +157,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   button: {
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#A399A9',
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 5,

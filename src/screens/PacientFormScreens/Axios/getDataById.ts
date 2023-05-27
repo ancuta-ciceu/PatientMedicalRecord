@@ -6,6 +6,7 @@ export const getDataById = async <T>(
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
 ) => {
   setLoading(true);
+  console.log(`this is the ${url}`);
   const data = await fetch(url, {
     method: 'GET',
   })

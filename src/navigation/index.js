@@ -9,6 +9,7 @@ import {PatientFormForAssistantScreen} from '../screens/PacientFormScreens/Patie
 import {SignUpDoctorScreen} from '../screens/SignUpScreen/SignUpDoctorScreen';
 import {SignUpMedicalAssistantScreen} from '../screens/SignUpScreen/SignUpMedicalAssistantScreen';
 import {PatientFormForDoctorScreen} from '../screens/PacientFormScreens/PatientFormForDoctor';
+import {AfterAddingPatientData} from '../screens/PacientFormScreens/AfterAddingPatientData';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ const Navigation = () => {
         <Stack.Screen
           name="QRCodeScannerScreen"
           component={QRCodeScannerScreen}
+          initialParams={{asMedic: false}}
         />
         <Stack.Screen
           name="PacientFormForAssistantScreen"
@@ -44,6 +46,10 @@ const Navigation = () => {
         <Stack.Screen
           name="SignUpMedicalAssistantScreen"
           component={SignUpMedicalAssistantScreen}
+        />
+        <Stack.Screen
+          name="AfterAddingPatientDataScreen"
+          component={AfterAddingPatientData}
         />
       </Stack.Navigator>
     </NavigationContainer>
