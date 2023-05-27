@@ -127,7 +127,7 @@ export const PatientFormForAssistantScreen = () => {
   const [date, setDate] = useState(new Date());
   return loading ? (
     <LoadingScreen />
-  ) : patient.cnp !== '' ? (
+  ) : patient.cnp === '' ? (
     <View style={styles.container}>
       <Text style={styles.title}>Patient Form</Text>
       <CustomInput
