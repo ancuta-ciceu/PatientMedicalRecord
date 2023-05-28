@@ -6,14 +6,15 @@ import CustomButton from '../../components/CustomButton';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-
+import {NavigationContainer} from '@react-navigation/native';
+//import {GoogleSignin} from '@react-native-google-signin/google-signin';
+/*
 GoogleSignin.configure({
   webClientId:
     '809074699671-b1jc0n7mg24np6johdf9jslauoce2lm0.apps.googleusercontent.com',
   scopes: ['profile', 'email'],
 });
-
+*/
 const SignInAsDoctorScreen = () => {
   const [doctorName, setUsername] = useState('');
   const [doctorPassword, setPassword] = useState('');
@@ -54,7 +55,7 @@ const SignInAsDoctorScreen = () => {
   };
 
   const onSignInWithGoogle = async () => {
-    try {
+   /* try {
       // Start the Google sign-in flow
       await GoogleSignin.signIn();
 
@@ -75,7 +76,8 @@ const SignInAsDoctorScreen = () => {
       console.warn('Login succesfull');
     } catch (error) {
       console.error(error);
-    }
+    }*/
+    console.log('Google sign in');
   };
 
   const onSignUpPressed = () => {
@@ -90,15 +92,21 @@ const SignInAsDoctorScreen = () => {
           placeholder="Username"
           value={doctorName}
           setValue={setUsername}
+          testID="Username"
         />
         <CustomInput
           placeholder="Password"
           value={doctorPassword}
           setValue={setPassword}
           secureTextEntry={true}
+          testID="Password"
         />
 
-        <CustomButton text="Login" onPress={onSignInPressed} />
+        <CustomButton 
+          text="Login" 
+          onPress={onSignInPressed} 
+          testID="Login"
+          />
 
         <CustomButton
           text="Sign In with Google"
@@ -110,6 +118,7 @@ const SignInAsDoctorScreen = () => {
         <CustomButton
           text="Don't have an account? Sign Up"
           onPress={onSignUpPressed}
+          testID="SignUpButton"
           type="SECONDARY"
         />
       </View>
