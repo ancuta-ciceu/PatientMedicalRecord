@@ -1,4 +1,11 @@
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Icon, lightColors} from '@rneui/themed';
 import {initialTreatment, Treatment} from './PatientFormForDoctor';
@@ -6,6 +13,7 @@ import {FieldValues, useForm} from 'react-hook-form';
 import {postData} from './Axios/postData';
 import {updateData} from './Axios/updateData';
 import {FormModal} from './Components/TreatmentModal';
+import {UpdateTreatmentModal} from './Components/UpdateTreatmentModal';
 
 export const TreatmentsVisibleForDoctors = ({route}: {route: any}) => {
   const [treatments, setTreatments] = useState<Treatment[]>([initialTreatment]);
@@ -16,76 +24,69 @@ export const TreatmentsVisibleForDoctors = ({route}: {route: any}) => {
         method: 'GET',
       },
     ).catch(err => console.log(err + 1));
-    console.log(data);
     setTreatments(await data?.json());
   };
-
-  const [response, setResponse] = useState();
-  const onSubmitPressed = async (treatment: Treatment) => {
-    try {
-      await updateData(
-        JSON.stringify({
-          patientId: treatment.patientId,
-          days: 17,
-          timesPerDay: treatment.timesPerDay,
-          medicine: treatment.medicine,
-          administrationType: treatment.administrationType,
-        }),
-        `http://localhost:5000/treatments/${treatment.treatmentId}`,
-      ).then(() => getTreatmentsById());
-    } catch (e: any) {
-      Alert.alert('Oops', e.message);
-    }
-  };
+  const [isModalVisible, setModalVisible] = useState(false);
+  const {control} = useForm();
 
   useEffect(() => {
     route.params?.id && getTreatmentsById();
   }, [route.params?.id]);
 
+  const [defaultTreatment, setDefaultTreatment] =
+    useState<Treatment>(initialTreatment);
+
   return (
-    <View style={styles.containerTreatment}>
-      {treatments?.map(treatment => (
-        <React.Fragment key={treatment.treatmentId}>
-          <View style={styles.sectionTreatment}>
-            <View style={[styles.section, styles.iconSection]}>
-              <View>
-                <Text style={styles.label}>Name:</Text>
-                <Text style={styles.value}>{treatment.medicine}</Text>
+    <ScrollView>
+      <View style={styles.containerTreatment}>
+        {treatments?.map(treatment => (
+          <React.Fragment key={treatment.treatmentId}>
+            <View style={styles.sectionTreatment}>
+              <View style={[styles.section, styles.iconSection]}>
+                <View>
+                  <Text style={styles.label}>Name:</Text>
+                  <Text style={styles.value}>{treatment.medicine}</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModalVisible(true);
+                    setDefaultTreatment(treatment);
+                  }}>
+                  <Icon
+                    raised
+                    name="edit"
+                    type="font-awesome-5"
+                    color="#A399A9"
+                  />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={() => onSubmitPressed(treatment)}>
-                <Icon
-                  raised
-                  name="prescription-bottle"
-                  type="font-awesome-5"
-                  color="#A399A9"
-                />
-              </TouchableOpacity>
-            </View>
 
-            <View style={styles.section}>
-              <Text style={styles.label}>Administration Type:</Text>
-              <Text style={styles.value}>{treatment.administrationType}</Text>
-            </View>
+              <View style={styles.section}>
+                <Text style={styles.label}>Administration Type:</Text>
+                <Text style={styles.value}>{treatment.administrationType}</Text>
+              </View>
 
-            <View style={styles.section}>
-              <Text style={styles.label}>Number of days:</Text>
-              <Text style={styles.value}>{treatment.days}</Text>
-            </View>
+              <View style={styles.section}>
+                <Text style={styles.label}>Number of days:</Text>
+                <Text style={styles.value}>{treatment.days}</Text>
+              </View>
 
-            <View style={styles.section}>
-              <Text style={styles.label}>Number of times/day:</Text>
-              <Text style={styles.value}>{treatment.timesPerDay}</Text>
+              <View style={styles.section}>
+                <Text style={styles.label}>Number of times/day:</Text>
+                <Text style={styles.value}>{treatment.timesPerDay}</Text>
+              </View>
             </View>
-          </View>
-          {/*<FormModal*/}
-          {/*  isVisible={isModalVisible}*/}
-          {/*  setVisibility={setModalVisible}*/}
-          {/*  control={control}*/}
-          {/*  patientId={patient?.patientId}*/}
-          {/*/>*/}
-        </React.Fragment>
-      ))}
-    </View>
+          </React.Fragment>
+        ))}
+        <UpdateTreatmentModal
+          isVisible={isModalVisible}
+          setVisibility={setModalVisible}
+          control={control}
+          getTreatmentsById={getTreatmentsById}
+          defaultTreatment={defaultTreatment}
+        />
+      </View>
+    </ScrollView>
   );
 };
 

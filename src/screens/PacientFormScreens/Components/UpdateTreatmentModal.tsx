@@ -14,42 +14,42 @@ import {CustomInput} from './CustomInput';
 import {lightColors} from '@rneui/themed';
 import {initialTreatment, Treatment} from '../PatientFormForDoctor';
 import {postData} from '../Axios/postData';
+import {CustomInputWithDefaultValues} from './CustomInputWIthDefaultValues';
+import {updateData} from '../Axios/updateData';
 
 export interface FormModalProps {
   isVisible: boolean;
   setVisibility: React.Dispatch<React.SetStateAction<boolean>>;
   control: Control<FieldValues, any>;
-  patientId: number;
+  defaultTreatment: Treatment;
+  getTreatmentsById: () => Promise<void>;
 }
-export const FormModal = ({
+export const UpdateTreatmentModal = ({
   isVisible,
   setVisibility,
-  patientId,
+  defaultTreatment,
+  getTreatmentsById,
 }: FormModalProps) => {
   const {control, handleSubmit} = useForm();
-
-  const [loading, setLoading] = useState(false);
   const onSubmitPressed = async (data: FieldValues) => {
-    if (loading) {
-      return;
-    }
-
-    setLoading(true);
+    console.log('aici');
     try {
-      const response = await postData(
+      await updateData(
         JSON.stringify({
-          patientId: patientId,
+          treatmentId: defaultTreatment.treatmentId,
+          patientId: defaultTreatment.patientId,
           days: data.days,
           timesPerDay: data.timesPerDay,
           medicine: data.medicine,
           administrationType: value,
         }),
-        'http://localhost:5000/treatments',
+        `http://localhost:5000/treatments/${defaultTreatment.treatmentId}`,
       );
+      //.then(() => getTreatmentsById())
+      //.finally(() => setVisibility(false));
     } catch (e: any) {
       Alert.alert('Oops', e.message);
     }
-    setLoading(false);
   };
 
   const [open, setOpen] = useState(false);
@@ -74,24 +74,27 @@ export const FormModal = ({
         backdropOpacity={0.9}
         onBackdropPress={() => setVisibility(false)}
         animationOut={'slideOutUp'}>
-        <View style={styles.container}>
-          <Text style={styles.title}>Add Treatment</Text>
-          <CustomInput
+        <View>
+          <Text style={styles.title}>Update Treatment</Text>
+          <CustomInputWithDefaultValues
             control={control}
             name={'medicine'}
             placeholder={'Medicine name'}
+            defaultValue={defaultTreatment.medicine}
           />
-          <CustomInput
+          <CustomInputWithDefaultValues
             control={control}
             name={'timesPerDay'}
             placeholder={'Number of times per day'}
             numerical={true}
+            defaultValue={defaultTreatment.timesPerDay + ''}
           />
-          <CustomInput
+          <CustomInputWithDefaultValues
             control={control}
             name={'days'}
             placeholder={'Number of days'}
             numerical={true}
+            defaultValue={defaultTreatment.days + ''}
           />
           <DropDownPicker
             open={open}
@@ -113,10 +116,12 @@ export const FormModal = ({
           <TouchableOpacity
             style={styles.button}
             onPress={handleSubmit(data => {
-              setVisibility(false);
+              console.log('!!!!!');
               onSubmitPressed(data);
-            })}>
-            <Text style={styles.buttonText}>Confirm treatment</Text>
+            })}
+            //onPress={() => console.log('aici')}
+          >
+            <Text style={styles.buttonText}>Update treatment</Text>
           </TouchableOpacity>
         </View>
       </Modal>
