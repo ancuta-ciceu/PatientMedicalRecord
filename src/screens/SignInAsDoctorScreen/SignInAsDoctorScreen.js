@@ -6,7 +6,6 @@ import CustomButton from '../../components/CustomButton';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {NavigationContainer} from '@react-navigation/native';
 //import {GoogleSignin} from '@react-native-google-signin/google-signin';
 /*
 GoogleSignin.configure({
@@ -31,7 +30,7 @@ const SignInAsDoctorScreen = () => {
       // Store the token securely
       await AsyncStorage.setItem('token', token);
       navigation.navigate('QRCodeScannerScreen', {asMedic: true});
-      console.warn('Login succesfull');
+      console.log('Login succesfull');
     } catch (error) {
       console.error(error);
   
