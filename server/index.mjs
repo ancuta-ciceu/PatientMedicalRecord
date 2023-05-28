@@ -53,6 +53,7 @@ app.post('/createmedicalassistant', async (req, res) => {
       medical_assistant_email,
       medical_assistant_passhash,
     } = req.body;
+    
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(
       medical_assistant_passhash,

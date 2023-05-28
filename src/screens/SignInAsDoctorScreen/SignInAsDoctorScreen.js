@@ -33,7 +33,23 @@ const SignInAsDoctorScreen = () => {
       console.warn('Login succesfull');
     } catch (error) {
       console.error(error);
-      Alert.alert('Invalid username or password');
+  
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        if (error.response.status === 401) {
+          // User not found in the database
+          Alert.alert('User not found');
+        } else {
+          // Other server error
+          Alert.alert('Server error');
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        Alert.alert('No response from server');
+      } else {
+        // Other error
+        Alert.alert('Error occurred');
+      }
     }
   };
 
