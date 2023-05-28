@@ -52,6 +52,8 @@ export const SignUpMedicalAssistantScreen = () => {
         'http://localhost:5000/createmedicalassistant',
         requestOptions,
       );
+
+      // @ts-ignore
       navigation.navigate('SignInAsMedicalAssistantScreen');
       console.log('Signup successful!');
       const data = await response.json();

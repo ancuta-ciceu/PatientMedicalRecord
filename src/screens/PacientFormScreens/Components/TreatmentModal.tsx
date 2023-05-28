@@ -12,21 +12,19 @@ import Modal from 'react-native-modal';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {CustomInput} from './CustomInput';
 import {lightColors} from '@rneui/themed';
-import {Treatment} from '../PatientFormForDoctor';
+import {initialTreatment, Treatment} from '../PatientFormForDoctor';
 import {postData} from '../Axios/postData';
 
 export interface FormModalProps {
   isVisible: boolean;
   setVisibility: React.Dispatch<React.SetStateAction<boolean>>;
   control: Control<FieldValues, any>;
-  setTreatment: React.Dispatch<React.SetStateAction<Treatment>>;
   patientId: number;
 }
 
 export const FormModal = ({
   isVisible,
   setVisibility,
-  setTreatment,
   patientId,
 }: FormModalProps) => {
   const {control, handleSubmit} = useForm();
@@ -84,11 +82,6 @@ export const FormModal = ({
             name={'medicine'}
             placeholder={'Medicine name'}
           />
-          {/*<CustomInput*/}
-          {/*  control={control}*/}
-          {/*  name={'administrationType'}*/}
-          {/*  placeholder={'Administration type'}*/}
-          {/*/>*/}
           <CustomInput
             control={control}
             name={'timesPerDay'}
@@ -133,19 +126,6 @@ export const FormModal = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    // padding: 20,
-    // backgroundColor: '#fff',
-    // borderRadius: 10,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 3,
-    // },
-    // shadowOpacity: 0.27,
-    // shadowRadius: 4.65,
-    // elevation: 6,
-  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
