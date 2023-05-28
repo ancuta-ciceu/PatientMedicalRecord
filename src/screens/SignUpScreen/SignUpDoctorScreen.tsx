@@ -62,9 +62,13 @@ import {useNavigation} from '@react-navigation/native';
               navigation.navigate('SignInAsDoctorScreen');
               console.log('Signup successful!');
             } else if (response.status === 400 && data.message === 'Email already exists') {
-              errors.doctor_email = 'Email already exists';
+              errors.doctor_email = 'There is already an account with this email!';
               setFormErrors(errors);
-            } else {
+            } else if (response.status === 402 && data.message === 'name already exists') {
+              errors.doctor_name = 'There is already an account with this username!';
+              setFormErrors(errors);
+            }
+             else {
               console.log('Signup failed:', data.message);
             }
           } catch (error) {

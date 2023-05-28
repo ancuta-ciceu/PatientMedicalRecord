@@ -58,17 +58,20 @@ export const SignUpMedicalAssistantScreen = () => {
       navigation.navigate('SignInAsMedicalAssistantScreen');
       console.log('Signup successful!');
       } else if (response.status === 400 && data.message === 'Email already exists') {
-              errors.medical_assistant_email = 'Email already exists';
+              errors.medical_assistant_email = 'There is already an account with this email';
               setFormErrors(errors);
-            } else {
-              console.log('Signup failed:', data.message);
-            }
-          } catch (error) {
-            console.log('Signup error:', error);
-          }
+        }else if (response.status === 402 && data.message === 'name already exists') {
+          errors.medical_assistant_name = 'There is already an account with this name';
+          setFormErrors(errors);
         } else {
+              console.log('Signup failed:', data.message);
+          }
+        } catch (error) {
+            console.log('Signup error:', error);
+        }
+    } else {
       setFormErrors(errors);
-    }
+      }
   };
 
   return (
