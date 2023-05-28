@@ -7,10 +7,12 @@ const CustomButton = ({
   type = 'PRIMARY',
   backgrColor,
   foregrColor,
+  testID,
 }) => {
   return (
     <Pressable
       onPress={onPress}
+      testID={testID}
       style={[
         styles.container,
         styles[`container_${type}`],

@@ -10,13 +10,13 @@ const SignInAsScreen = () => {
   const navigation = useNavigation();
 
   const onDoctorPressed = () => {
-    console.warn('Sign in as Doctor');
+    console.log('Sign in as Doctor');
 
     navigation.navigate('SignInAsDoctorScreen');
   };
 
   const onMedicalAssistantPressed = () => {
-    console.warn('Sign in as Medical assistant');
+    console.log('Sign in as Medical assistant');
     navigation.navigate('SignInAsMedicalAssistantScreen');
   };
 

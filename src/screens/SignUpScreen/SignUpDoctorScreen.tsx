@@ -87,6 +87,7 @@ import {useNavigation} from '@react-navigation/native';
             value={doctorName}
             setValue={setDoctorName}
             secureTextEntry={false}
+            
           />
           {formErrors.doctor_name && <Text style={styles.error}>{formErrors.doctor_name}</Text>}
           <CustomInput
@@ -94,8 +95,10 @@ import {useNavigation} from '@react-navigation/native';
             value={doctorEmail}
             setValue={setDoctorEmail}
             secureTextEntry={false}
+            testID={'DoctorEmailInput'}
           />
-          {formErrors.doctor_email && <Text style={styles.error}>{formErrors.doctor_email}</Text>}
+          {formErrors.doctor_email && 
+            <Text style={styles.error}>{formErrors.doctor_email}</Text>}
           <CustomInput
             placeholder="Doctor password"
             value={doctor_password}
@@ -112,7 +115,12 @@ import {useNavigation} from '@react-navigation/native';
           {formErrors.doctor_specialization && (
             <Text style={styles.error}>{formErrors.doctor_specialization}</Text>
           )}
-          <CustomButton text="SignUp" onPress={handleSubmit} type='PRIMARY' />
+          <CustomButton 
+            text="SignUp" 
+            onPress={handleSubmit} 
+            type='PRIMARY'
+            testID={'SignUpButton'} 
+            />
         </View>
       );
     };

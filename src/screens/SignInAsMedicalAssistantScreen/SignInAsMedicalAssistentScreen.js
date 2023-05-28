@@ -72,9 +72,9 @@ const SignInAsMedicalAssistantScreen = () => {
       );
       await AsyncStorage.setItem('token', accessToken);
       navigation.navigate('QRCodeScannerScreen', {asMedic: false});
-      console.warn('Login succesfull');
+      console.log('Login succesfull');
     } catch (error) {
-      console.error(error);
+      //console.error(error);
   
       if (error.response) {
         // The request was made and the server responded with a status code
