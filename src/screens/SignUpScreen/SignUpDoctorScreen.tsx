@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, View, Alert} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import CustomInput from '../../components/CustomInput'
 import {useNavigation} from '@react-navigation/native';
@@ -44,24 +44,40 @@ import {useNavigation} from '@react-navigation/native';
         }
     
         if (Object.keys(errors).length === 0) {
-          const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              doctor_name: doctorName,
-              doctor_email: doctorEmail,
-              doctor_passhash: doctor_password,
-              doctor_specialization: doctorSpecialization,
-            }),
-          };
-          const response = await fetch('http://localhost:5000/createdoctor', requestOptions);
-          navigation.navigate('SignInAsDoctorScreen');
-          console.log("Signup successful!");
-          const data = await response.json();
+          try {
+            const requestOptions = {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                doctor_name: doctorName,
+                doctor_email: doctorEmail,
+                doctor_passhash: doctor_password,
+                doctor_specialization: doctorSpecialization,
+              }),
+            };
+            const response = await fetch('http://localhost:5000/createdoctor', requestOptions);
+            const data = await response.json();
+      
+            if (response.ok) {
+              navigation.navigate('SignInAsDoctorScreen');
+              console.log('Signup successful!');
+            } else if (response.status === 400 && data.message === 'Email already exists') {
+              errors.doctor_email = 'There is already an account with this email!';
+              setFormErrors(errors);
+            } else if (response.status === 402 && data.message === 'name already exists') {
+              errors.doctor_name = 'There is already an account with this username!';
+              setFormErrors(errors);
+            }
+             else {
+              console.log('Signup failed:', data.message);
+            }
+          } catch (error) {
+            console.log('Signup error:', error);
+          }
         } else {
           setFormErrors(errors);
         }
-      };
+  };
     
       return (
         <View style={styles.container}>

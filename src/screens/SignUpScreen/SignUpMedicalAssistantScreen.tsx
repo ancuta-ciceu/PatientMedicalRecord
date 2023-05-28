@@ -39,27 +39,39 @@ export const SignUpMedicalAssistantScreen = () => {
     }
 
     if (Object.keys(errors).length === 0) {
-      const requestOptions = {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          medical_assistant_name: MedicalAssistantName,
-          medical_assistant_email: MedicalAssistantEmail,
-          medical_assistant_passhash: MedicalAssistantPassword,
-        }),
+      try {
+        const requestOptions = {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            medical_assistant_name: MedicalAssistantName,
+            medical_assistant_email: MedicalAssistantEmail,
+            medical_assistant_passhash: MedicalAssistantPassword,
+          }),
       };
       const response = await fetch(
         'http://localhost:5000/createmedicalassistant',
         requestOptions,
       );
-
-      // @ts-ignore
+      const data = await response.json();
+      if(response.ok) {
       navigation.navigate('SignInAsMedicalAssistantScreen');
       console.log('Signup successful!');
-      const data = await response.json();
+      } else if (response.status === 400 && data.message === 'Email already exists') {
+              errors.medical_assistant_email = 'There is already an account with this email';
+              setFormErrors(errors);
+        }else if (response.status === 402 && data.message === 'name already exists') {
+          errors.medical_assistant_name = 'There is already an account with this name';
+          setFormErrors(errors);
+        } else {
+              console.log('Signup failed:', data.message);
+          }
+        } catch (error) {
+            console.log('Signup error:', error);
+        }
     } else {
       setFormErrors(errors);
-    }
+      }
   };
 
   return (

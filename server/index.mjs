@@ -32,6 +32,24 @@ app.post('/createdoctor', async (req, res) => {
   try {
     const {doctor_name, doctor_email, doctor_passhash, doctor_specialization} =
       req.body;
+       // Check if the email already exists in the database
+    const existingdoctor_email = await pool.query(
+      'SELECT * FROM doctor WHERE doctor_email = $1',
+      [doctor_email]
+    );
+
+    if (existingdoctor_email.rows.length > 0) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+
+    const existingdoctor_name = await pool.query(
+      'SELECT * FROM doctor WHERE doctor_name = $1',
+      [doctor_name]
+    );
+
+    if (existingdoctor_name.rows.length > 0) {
+      return res.status(402).json({ message: 'name already exists' });
+    }
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(doctor_passhash, saltRounds);
     const newDoctor = await pool.query(
@@ -53,6 +71,25 @@ app.post('/createmedicalassistant', async (req, res) => {
       medical_assistant_email,
       medical_assistant_passhash,
     } = req.body;
+ // Check if the email already exists in the database
+ const existingMedicalAssistant_email = await pool.query(
+  'SELECT * FROM medical_assistant WHERE medical_assistant_email = $1',
+  [medical_assistant_email]
+);
+
+if (existingMedicalAssistant_email.rows.length > 0) {
+  return res.status(400).json({ message: 'Email already exists' });
+} 
+
+// Check if the username already exists in the database
+const existingMedicalAssistant_name = await pool.query(
+  'SELECT * FROM medical_assistant WHERE medical_assistant_name = $1',
+  [medical_assistant_name]
+);
+
+if (existingMedicalAssistant_name.rows.length > 0) {
+  return res.status(402).json({ message: 'name already exists' });
+}
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(
       medical_assistant_passhash,
