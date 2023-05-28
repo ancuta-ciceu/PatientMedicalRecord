@@ -200,6 +200,8 @@ app.put('/pacients/:id', async (req, res) => {
     console.error(err.message);
   }
 });
+
+
 //delete a pacient
 app.delete('/pacients/:id', async (req, res) => {
   try {
@@ -220,6 +222,21 @@ app.post('/treatments', async (req, res) => {
       [patientId, days, timesPerDay, medicine, administrationType],
     );
     res.json(newTreatment.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+app.put('/treatments/:id', async (req, res) => {
+  try {
+    const {id} = req.params;
+    const {patientId, days, timesPerDay, medicine, administrationType} = req.body;
+    const updatedTreatement = await pool.query(
+      'UPDATE public.treatment SET "treatmentId"=$1, "patientId"=$2, days=$3, "timesPerDay"=$4, medicine=$5, "administrationType"=$6 WHERE "treatmentId" = $7',
+      [id, patientId, days, timesPerDay, medicine, administrationType, id]
+    );
+    console.log(patientId, days, timesPerDay, medicine, administrationType, id);
+    return res.json(updatedTreatement.rows[1]);
   } catch (err) {
     console.error(err.message);
   }

@@ -32,7 +32,7 @@ export interface Treatment {
   administrationType: string;
 }
 
-const initialTreatment: Treatment = {
+export const initialTreatment: Treatment = {
   patientId: 0,
   treatmentId: 0,
   administrationType: '',
@@ -51,7 +51,6 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
 
   const {control, handleSubmit} = useForm();
   const [patient, setPatient] = useState<Pacient>(initialPacient);
-  const [treatment, setTreatment] = useState<Treatment>(initialTreatment);
   const [isModalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
 
@@ -74,8 +73,6 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
   //   getPatientById();
   // }, []);
 
-  // @ts-ignore
-  // @ts-ignore
   return patient.cnp !== '' ? (
     <View style={styles.container}>
       <View style={[styles.section, styles.iconSection]}>
@@ -114,9 +111,16 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
         isVisible={isModalVisible}
         setVisibility={setModalVisible}
         control={control}
-        setTreatment={setTreatment}
         patientId={patient?.patientId}
       />
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() =>
+          // @ts-ignore
+          navigation.navigate('TreatmentsVisibleForDoctorsScreen', {id: id})
+        }>
+        <Text style={styles.buttonText}>See added treatments</Text>
+      </TouchableOpacity>
     </View>
   ) : (
     <View>
@@ -127,6 +131,7 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
+            // @ts-ignore
             navigation.navigate('QRCodeScannerScreen', {asMedic: true})
           }>
           <Text style={styles.buttonText}>Go back to QR Scanner</Text>
@@ -165,7 +170,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 5,
-    marginBottom: 10,
+    marginBottom: 5,
   },
   iconSection: {
     flexDirection: 'row',
