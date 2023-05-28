@@ -105,7 +105,7 @@ export const PatientFormForDoctorScreen = ({route}: {route: any}) => {
       <TouchableOpacity
         style={styles.button}
         onPress={() => setModalVisible(true)}>
-        <Text style={styles.buttonText}>Show modal</Text>
+        <Text style={styles.buttonText}>Add treatment</Text>
       </TouchableOpacity>
       <FormModal
         isVisible={isModalVisible}
